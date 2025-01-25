@@ -65,11 +65,9 @@ namespace InGame
                     int selectionBeginLine = selection.begin / 16;
                     int selectionEndLine = selection.end / 16;
 
-                    int realBegin = view.VirtualToAbsLine(selectionBeginLine) + selection.begin % 16;
+                    int realBegin = view.VirtualToAbsLine(selectionBeginLine) / 16 + selection.begin % 16;
 
-                    Debug.Log(selection.begin + ", " + selectionBeginLine + " => " + realBegin);
-
-                    int realEnd = view.VirtualToAbsLine(selectionEndLine) + selection.end % 16;
+                    int realEnd = view.VirtualToAbsLine(selectionEndLine) / 16 + selection.end % 16;
 
                     for (int i = realBegin; i <= realEnd; i++)
                     {
@@ -98,7 +96,7 @@ namespace InGame
             blocks.Clear();
         }
 
-        private Vector2Int ScreenPosToCell(Vector2 screen)
+        public Vector2Int ScreenPosToCell(Vector2 screen)
         {
             RectTransform viewRect = view.GetComponent<RectTransform>();
 

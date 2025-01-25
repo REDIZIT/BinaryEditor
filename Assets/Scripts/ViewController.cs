@@ -36,15 +36,23 @@ namespace InGame
                 var rect = inst.GetComponent<RectTransform>();
                 rect.anchoredPosition = new Vector2(0, -i * 12);
             }
-            OnChange();
+
+            ClearLines();
         }
 
         public void Show(BinaryFile file)
         {
             this.file = file;
 
-            HandleLines();
-            OnChange();
+            if (file == null)
+            {
+                ClearLines();
+            }
+            else
+            {
+                HandleLines();
+                OnChange();
+            }
         }
 
         public void GoTo(int address)
@@ -75,15 +83,15 @@ namespace InGame
 
             for (int i = 0; i < virtualLine; i++)
             {
+                if (i >= lines.Count) return -1;
+
                 Line line = lines[i];
 
-                if (line.zerosEndIndex == 0)
+                absLine++;
+
+                if (line.zerosEndIndex != 0)
                 {
-                    absLine += 16;
-                }
-                else
-                {
-                    absLine += (1 + line.zerosEndIndex - line.index) * 16; // +1 due to <only zeros> line takes 1 line space in UI
+                    absLine += line.zerosEndIndex - line.index;
                 }
             }
 
@@ -165,6 +173,14 @@ namespace InGame
             }
         }
 
+        private void ClearLines()
+        {
+            foreach (LineController line in lineInsts)
+            {
+                line.Clear();
+            }
+        }
+
         private void OnChange()
         {
             // int lastLineIndex = data.Length / 16 - 1;
@@ -208,13 +224,13 @@ namespace InGame
 
             if (lines.Count > 0)
             {
-                scrollbar.size = lineInsts.Length / (float)lines.Count;
-                scrollbar.value = scroll / (float)lines.Count;
+                scrollbar.size = Mathf.Clamp(lineInsts.Length / (float) lines.Count, 0.05f, 1);
+                scrollbar.SetValueWithoutNotify(scroll / (float) lines.Count);
             }
             else
             {
                 scrollbar.size = 1;
-                scrollbar.value = 0;
+                scrollbar.SetValueWithoutNotify(0);
             }
 
             onChanged.Fire();

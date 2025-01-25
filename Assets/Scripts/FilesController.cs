@@ -34,6 +34,11 @@ namespace InGame
         {
             files.Remove(file);
             Refresh();
+
+            if (view.File == file)
+            {
+                view.Show(null);
+            }
         }
 
         private void LoadFile(string filepath)

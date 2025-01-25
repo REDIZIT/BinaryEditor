@@ -16,16 +16,19 @@ namespace InGame
 
         private void OnValidate()
         {
-            FitRows(byteRowsParent);
-            FitRows(charRowsParent);
+            FitRows(byteRowsParent, false);
+            FitRows(charRowsParent, true);
         }
 
-        private void FitRows(Transform parent)
+        private void FitRows(Transform parent, bool isChars)
         {
+            int width = isChars ? 7 : 11;
+            int bigSpacing = isChars ? 4 : 6;
+
             for (int i = 0; i < 16; i++)
             {
                 var child = parent.GetChild(i).GetComponent<RectTransform>();
-                child.anchoredPosition = new Vector2(11 * i + (i / 4 * 6), 0);
+                child.anchoredPosition = new Vector2(width * i + (i / 4 * bigSpacing), 0);
             }
         }
 
@@ -67,7 +70,8 @@ namespace InGame
 
         private string LineIndexToHex(int index)
         {
-            return "0x" + (index * 16).ToString("x8");
+            string hex = index.ToString("x");
+            return "<color=#666>0x" + '0'.Multiply(8 - hex.Length) + "</color>" + hex;
         }
     }
 }

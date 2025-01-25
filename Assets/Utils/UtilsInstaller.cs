@@ -8,6 +8,7 @@ namespace InGame
         [SerializeField] private Canvas canvas;
         [SerializeField] private FilesController files;
         [SerializeField] private ViewController view;
+        [SerializeField] private SelectionController selection;
 
         [SerializeField] private SelectionBlock selectionBlock;
         [SerializeField] private Transform selectionBlockContainer;
@@ -19,6 +20,7 @@ namespace InGame
             Container.BindInstance(canvas);
             Container.BindInstance(files);
             Container.BindInstance(view);
+            Container.BindInstance(selection);
 
             Container.BindMemoryPool<SelectionBlock, SelectionBlock.Pool>()
                 .WithInitialSize(2)
