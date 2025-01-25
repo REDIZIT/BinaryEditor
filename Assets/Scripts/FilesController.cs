@@ -42,15 +42,53 @@ namespace InGame
             }
         }
 
+        public void Reload(BinaryFile file)
+        {
+            file.data = File.ReadAllBytes(file.filepath).ToList();
+            file.status = FileStatus.NotChanged;
+
+            Refresh();
+            view.Show(file);
+        }
+
+        public void SaveToDisk(BinaryFile file)
+        {
+            file.watcher.EnableRaisingEvents = false;
+
+            File.WriteAllBytes(file.filepath, file.data.ToArray());
+
+            file.watcher.EnableRaisingEvents = true;
+            file.status = FileStatus.NotChanged;
+
+            Refresh();
+        }
+        public void SaveToDiskAs(BinaryFile file)
+        {
+            string filepath = StandaloneFileBrowser.SaveFilePanel("Save bin as", Path.GetDirectoryName(file.filepath), Path.GetFileName(file.filepath), "");
+            if (string.IsNullOrEmpty(filepath)) return;
+
+
+            file.watcher.EnableRaisingEvents = false;
+
+            File.WriteAllBytes(filepath, file.data.ToArray());
+
+            file.watcher.EnableRaisingEvents = true;
+            file.status = FileStatus.NotChanged;
+
+            Refresh();
+        }
+
         private void LoadFile(string filepath)
         {
             BinaryFile file = new()
             {
-                filename = Path.GetFileName(filepath)
+                filepath = filepath
             };
 
             file.data = File.ReadAllBytes(filepath).ToList();
             files.Add(file);
+
+            file.SetupWatcher();
 
             Refresh();
             view.Show(file);
@@ -59,7 +97,37 @@ namespace InGame
 
     public class BinaryFile
     {
-        public string filename;
+        public string filepath;
         public List<byte> data;
+        public FileSystemWatcher watcher;
+        public FileStatus status;
+
+        public void SetupWatcher()
+        {
+            status = FileStatus.NotChanged;
+
+            watcher = new FileSystemWatcher(Path.GetDirectoryName(filepath));
+            watcher.NotifyFilter = NotifyFilters.LastWrite;
+            watcher.EnableRaisingEvents = true;
+            watcher.Changed += (s, e) => { CheckForStatus(e.Name, FileStatus.DiskChanged); };
+            watcher.Renamed += (s, e) => { CheckForStatus(e.Name, FileStatus.Deleted); CheckForStatus(e.OldName, FileStatus.Deleted); };
+            watcher.Deleted += (s, e) => { CheckForStatus(e.Name, FileStatus.Deleted); };
+        }
+
+        private void CheckForStatus(string filename, FileStatus status)
+        {
+            if (filename == Path.GetFileName(filepath))
+            {
+                this.status = status;
+            }
+        }
+    }
+
+    public enum FileStatus
+    {
+        NotChanged,
+        InAppChanged,
+        DiskChanged,
+        Deleted
     }
 }

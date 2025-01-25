@@ -61,6 +61,7 @@ namespace InGame
             }
 
             view.Refresh();
+            MarkAsModified();
         }
 
         private void Cutout()
@@ -75,6 +76,7 @@ namespace InGame
 
             view.HandleLines();
             view.Refresh();
+            MarkAsModified();
         }
 
         private void Space()
@@ -83,9 +85,10 @@ namespace InGame
             int address = s.begin;
 
             view.File.data.Insert(address, 0);
-            
+
             view.HandleLines();
             view.Refresh();
+            MarkAsModified();
         }
 
         private void Paste()
@@ -123,6 +126,7 @@ namespace InGame
             }
 
             view.Refresh();
+            MarkAsModified();
         }
 
         private void EditWithExtend()
@@ -178,6 +182,15 @@ namespace InGame
 
             view.HandleLines();
             view.Refresh();
+            MarkAsModified();
+        }
+
+        private void MarkAsModified()
+        {
+            if (view.File.status == FileStatus.NotChanged)
+            {
+                view.File.status = FileStatus.InAppChanged;
+            }
         }
     }
 }
