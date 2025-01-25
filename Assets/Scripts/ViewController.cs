@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace InGame
 {
@@ -8,7 +9,9 @@ namespace InGame
         [SerializeField] private LineController prefab;
         [SerializeField] private Transform container;
 
-        private LineController[] lineInsts = new LineController[32];
+        [SerializeField] private Scrollbar scrollbar;
+
+        private LineController[] lineInsts = new LineController[48];
 
         private List<Line> lines = new();
 
@@ -21,7 +24,11 @@ namespace InGame
             {
                 var inst = Instantiate(prefab.gameObject, container).GetComponent<LineController>();
                 lineInsts[i] = inst;
+
                 inst.Clear();
+
+                var rect = inst.GetComponent<RectTransform>();
+                rect.anchoredPosition = new Vector2(0, -i * 12);
             }
             OnChange();
         }
@@ -148,6 +155,24 @@ namespace InGame
                     }
                 }
             }
+
+
+            if (lines.Count > 0)
+            {
+                scrollbar.size = lineInsts.Length / (float)lines.Count;
+                scrollbar.value = scroll / (float)lines.Count;
+            }
+            else
+            {
+                scrollbar.size = 1;
+                scrollbar.value = 0;
+            }
+        }
+
+        public void OnSliderChanged(float value)
+        {
+            scroll = (int) (value * lines.Count);
+            OnChange();
         }
     }
 

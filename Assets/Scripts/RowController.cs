@@ -6,7 +6,7 @@ namespace InGame
 {
     public class RowController : MonoBehaviour
     {
-        [SerializeField] private TMP_InputField text;
+        [SerializeField] private TextMeshProUGUI text;
         [SerializeField] private bool isCharMode;
 
         private byte[] temp = new byte[1];
@@ -35,7 +35,7 @@ namespace InGame
                 text.text = b.ToString("x2");
             }
 
-            text.textComponent.color = b == 0 ? Color.gray : Color.white;
+            text.color = b == 0 ? Color.gray : Color.white;
         }
 
         public void Clear()

@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 
 namespace InGame
@@ -8,7 +9,25 @@ namespace InGame
         [SerializeField] private TMP_InputField lineIndexText;
         [SerializeField] private RowController[] byteRows, charRows;
 
+        [SerializeField] private Transform byteRowsParent, charRowsParent;
+
         [SerializeField] private GameObject rows, empty;
+
+
+        private void OnValidate()
+        {
+            FitRows(byteRowsParent);
+            FitRows(charRowsParent);
+        }
+
+        private void FitRows(Transform parent)
+        {
+            for (int i = 0; i < 16; i++)
+            {
+                var child = parent.GetChild(i).GetComponent<RectTransform>();
+                child.anchoredPosition = new Vector2(11 * i + (i / 4 * 6), 0);
+            }
+        }
 
         public void Refresh_Data(Line line, byte[] bytes)
         {
