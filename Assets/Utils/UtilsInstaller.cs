@@ -9,6 +9,9 @@ namespace InGame
         [SerializeField] private FilesController files;
         [SerializeField] private ViewController view;
 
+        [SerializeField] private SelectionBlock selectionBlock;
+        [SerializeField] private Transform selectionBlockContainer;
+
         public override void InstallBindings()
         {
             Container.Bind<UIHelper>().AsSingle();
@@ -16,6 +19,13 @@ namespace InGame
             Container.BindInstance(canvas);
             Container.BindInstance(files);
             Container.BindInstance(view);
+
+            Container.BindMemoryPool<SelectionBlock, SelectionBlock.Pool>()
+                .WithInitialSize(2)
+                .FromComponentInNewPrefab(selectionBlock)
+                .UnderTransform(selectionBlockContainer);
+
+            CustomAttributesResolver.instance.Init();
         }
     }
 }

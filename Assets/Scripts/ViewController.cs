@@ -6,6 +6,12 @@ namespace InGame
 {
     public class ViewController : MonoBehaviour
     {
+        public int LineInstsCount => lineInsts.Length;
+        public int Scroll => scroll;
+        public BinaryFile File => file;
+
+        public SmartAction onChanged = new();
+
         [SerializeField] private LineController prefab;
         [SerializeField] private Transform container;
 
@@ -39,6 +45,28 @@ namespace InGame
 
             HandleLines();
             OnChange();
+        }
+
+        public void GoTo(int address)
+        {
+            int addressLineIndex = address / 16;
+
+            for (int i = 0; i < lines.Count; i++)
+            {
+                Line line = lines[i];
+                if (line.index >= addressLineIndex)
+                {
+                    scroll = i;
+                    break;
+                }
+            }
+
+            OnChange();
+        }
+
+        public int AbsToScreenAddress(int address)
+        {
+            return address - scroll * 16;
         }
 
         private void HandleLinesRaw()
@@ -167,6 +195,8 @@ namespace InGame
                 scrollbar.size = 1;
                 scrollbar.value = 0;
             }
+
+            onChanged.Fire();
         }
 
         public void OnSliderChanged(float value)

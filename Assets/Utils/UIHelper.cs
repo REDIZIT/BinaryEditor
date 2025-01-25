@@ -182,6 +182,7 @@ namespace InGame
 
         private void ResolveCustom(GameObject inst)
         {
+            CustomAttributesResolver.Resolve(inst);
         }
     }
 }
