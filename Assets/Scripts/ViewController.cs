@@ -19,7 +19,7 @@ namespace InGame
 
         private LineController[] lineInsts = new LineController[48];
 
-        private List<Line> lines = new();
+        public List<Line> lines = new();
 
         private int scroll;
         private BinaryFile file;
@@ -67,6 +67,27 @@ namespace InGame
         public int AbsToScreenAddress(int address)
         {
             return address - scroll * 16;
+        }
+
+        public int VirtualToAbsLine(int virtualLine)
+        {
+            int absLine = 0;
+
+            for (int i = 0; i < virtualLine; i++)
+            {
+                Line line = lines[i];
+
+                if (line.zerosEndIndex == 0)
+                {
+                    absLine += 16;
+                }
+                else
+                {
+                    absLine += (1 + line.zerosEndIndex - line.index) * 16; // +1 due to <only zeros> line takes 1 line space in UI
+                }
+            }
+
+            return absLine;
         }
 
         private void HandleLinesRaw()

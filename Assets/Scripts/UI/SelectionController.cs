@@ -55,6 +55,38 @@ namespace InGame
                     Refresh();
                 }
             }
+
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.C))
+            {
+                List<string> chars = new();
+                int lastIndex = -1;
+                foreach (Selection selection in selections)
+                {
+                    int selectionBeginLine = selection.begin / 16;
+                    int selectionEndLine = selection.end / 16;
+
+                    int realBegin = view.VirtualToAbsLine(selectionBeginLine) + selection.begin % 16;
+
+                    Debug.Log(selection.begin + ", " + selectionBeginLine + " => " + realBegin);
+
+                    int realEnd = view.VirtualToAbsLine(selectionEndLine) + selection.end % 16;
+
+                    for (int i = realBegin; i <= realEnd; i++)
+                    {
+                        if (i <= lastIndex) continue;
+                        lastIndex = i;
+
+                        byte b = view.File.data[i];
+                        chars.Add(b.ToString("x2"));
+                    }
+                }
+
+                // string str = Encoding.ASCII.GetString(byteArray); // Copy as ASCII characters
+                string str = string.Concat(chars);
+
+                Debug.Log(str);
+                GUIUtility.systemCopyBuffer = str;
+            }
         }
 
         private void ClearBlocks()
