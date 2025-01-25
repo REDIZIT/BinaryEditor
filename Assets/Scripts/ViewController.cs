@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -40,6 +42,15 @@ namespace InGame
             ClearLines();
         }
 
+        private void Update()
+        {
+            if (Input.mouseScrollDelta.y != 0)
+            {
+                scroll -= (int)Input.mouseScrollDelta.y;
+                Refresh();
+            }
+        }
+
         public void Show(BinaryFile file)
         {
             this.file = file;
@@ -51,7 +62,7 @@ namespace InGame
             else
             {
                 HandleLines();
-                OnChange();
+                Refresh();
             }
         }
 
@@ -61,10 +72,10 @@ namespace InGame
 
             scroll = AbsToVirtualLine(addressLineIndex);
 
-            OnChange();
+            Refresh();
         }
 
-        public int AbsToScreenAddress(int address)
+        public int VirtualToScreenAddress(int address)
         {
             return address - scroll * 16;
         }
@@ -112,28 +123,13 @@ namespace InGame
             }
 
             return -1;
-
-            // for (int i = 0; i < absLine; i++)
-            // {
-            //     if (i >= lines.Count) return -1;
-            //
-            //     Line line = lines[virtualLine];
-            //     virtualLine++;
-            //
-            //     if (line.zerosEndIndex != 0)
-            //     {
-            //         i = line.zerosEndIndex;
-            //     }
-            // }
-            //
-            // return virtualLine;
         }
 
         private void HandleLinesRaw()
         {
             lines.Clear();
 
-            int lastLineIndex = Mathf.CeilToInt(file.data.Length / 16f);
+            int lastLineIndex = Mathf.CeilToInt(file.data.Count / 16f);
 
             for (int i = 0; i < lastLineIndex; i++)
             {
@@ -143,13 +139,13 @@ namespace InGame
                 });
             }
         }
-        private void HandleLines()
+        public void HandleLines()
         {
             lines.Clear();
             bool isCollectingZeroedLines = false;
             Line line = new();
 
-            int linesCount = Mathf.CeilToInt(file.data.Length / 16f);
+            int linesCount = Mathf.CeilToInt(file.data.Count / 16f);
 
             for (int i = 0; i < linesCount; i++)
             {
@@ -157,7 +153,7 @@ namespace InGame
                 for (int j = 0; j < 16; j++)
                 {
                     int byteIndex = i * 16 + j;
-                    if (byteIndex >= file.data.Length)
+                    if (byteIndex >= file.data.Count)
                     {
                         isThisLineZeroed = false;
                         break;
@@ -195,16 +191,9 @@ namespace InGame
             }
         }
 
-        private void Update()
-        {
-            if (Input.mouseScrollDelta.y != 0)
-            {
-                scroll -= (int)Input.mouseScrollDelta.y;
-                OnChange();
-            }
-        }
 
-        private void ClearLines()
+
+        public void ClearLines()
         {
             foreach (LineController line in lineInsts)
             {
@@ -212,7 +201,7 @@ namespace InGame
             }
         }
 
-        private void OnChange()
+        public void Refresh()
         {
             // int lastLineIndex = data.Length / 16 - 1;
 
@@ -240,11 +229,11 @@ namespace InGame
                         byte[] bytes;
                         if (line.index == lines.Count - 1)
                         {
-                            bytes = file.data[byteIndex..];
+                            bytes = file.data.Slice(byteIndex).ToArray();
                         }
                         else
                         {
-                            bytes = file.data[byteIndex..(byteIndex + 16)];
+                            bytes = file.data.Slice(byteIndex, byteIndex + 16).ToArray();
                         }
 
                         lineInst.Refresh_Data(line, bytes);
@@ -267,10 +256,22 @@ namespace InGame
             onChanged.Fire();
         }
 
+        public void ExtendFile(byte b)
+        {
+            file.data.Add(b);
+            HandleLines();
+        }
+
+        public void ShrinkFile()
+        {
+            file.data.RemoveAt(file.data.Count - 1);
+            HandleLines();
+        }
+
         public void OnSliderChanged(float value)
         {
             scroll = (int) (value * lines.Count);
-            OnChange();
+            Refresh();
         }
     }
 

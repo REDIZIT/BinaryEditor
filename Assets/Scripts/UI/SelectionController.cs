@@ -7,6 +7,8 @@ namespace InGame
 {
     public class SelectionController : MonoBehaviour
     {
+        public SmartAction onSelectionChange = new();
+
         [Inject] private SelectionBlock.Pool pool;
 
         [Inject] private ViewController view;
@@ -39,8 +41,8 @@ namespace InGame
 
                 if (cellPos != -Vector2Int.one)
                 {
-                    int address = (view.Scroll + cellPos.y) * 16 + cellPos.x;
-                    address = Mathf.Clamp(address, 0, view.File.data.Length);
+                    int address = view.VirtualToAbsLine(view.Scroll + cellPos.y) * 16 + cellPos.x;
+                    address = Mathf.Clamp(address, 0, view.File.data.Count);
 
 
                     if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift))
@@ -106,20 +108,39 @@ namespace InGame
                         selections.Add(new Selection(address));
                     }
 
+                    onSelectionChange.Fire();
                     Refresh();
                 }
             }
+
 
             if (selections.Count > 0)
             {
                 if (Input.GetKeyDown(KeyCode.Escape))
                 {
                     selections.Clear();
+                    onSelectionChange.Fire();
                     Refresh();
                 }
                 if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.C))
                 {
                     CopySelection();
+                }
+
+
+                int x = Input.GetKeyDown(KeyCode.LeftArrow) ? -1 : Input.GetKeyDown(KeyCode.RightArrow) ? 1 : 0;
+                int y = Input.GetKeyDown(KeyCode.DownArrow) ? -1 : Input.GetKeyDown(KeyCode.UpArrow) ? 1 : 0;
+                int offset = -y * 16 + x;
+
+                if (offset != 0)
+                {
+                    var s = selections[selections.Count - 1];
+                    s.begin += offset;
+                    s.end += offset;
+                    selections[selections.Count - 1] = s;
+
+                    onSelectionChange.Fire();
+                    Refresh();
                 }
             }
         }
@@ -129,8 +150,21 @@ namespace InGame
             if (selections.Count == 0) return;
 
             List<string> chars = new();
-            int lastIndex = -1;
 
+            foreach (int address in EnumerateSelectedAddresses())
+            {
+                byte b = view.File.data[address];
+                chars.Add(b.ToString("x2"));
+            }
+
+            // string str = Encoding.ASCII.GetString(byteArray); // Copy as ASCII characters
+            string str = string.Concat(chars);
+
+            GUIUtility.systemCopyBuffer = str;
+        }
+
+        public IEnumerable<int> EnumerateSelectedAddresses()
+        {
             HashSet<int> selectedAddresses = new();
 
             foreach (Selection selection in selections)
@@ -150,14 +184,8 @@ namespace InGame
 
             foreach (int address in selectedAddresses.OrderBy(a => a))
             {
-                byte b = view.File.data[address];
-                chars.Add(b.ToString("x2"));
+                yield return address;
             }
-
-            // string str = Encoding.ASCII.GetString(byteArray); // Copy as ASCII characters
-            string str = string.Concat(chars);
-
-            GUIUtility.systemCopyBuffer = str;
         }
 
         private void ClearBlocks()
@@ -202,7 +230,8 @@ namespace InGame
             {
                 for (int i = selection.begin; i <= selection.end; i++)
                 {
-                    int screenAddress = view.AbsToScreenAddress(i);
+                    int virtualAddress = view.AbsToVirtualLine(i / 16) * 16 + i % 16;
+                    int screenAddress = view.VirtualToScreenAddress(virtualAddress);
                     if (screenAddress >= 0 && screenAddress < map.GetLength(0) * map.GetLength(1))
                     {
                         map[screenAddress % 16, screenAddress / 16] = true;

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using SFB;
 using UnityEngine;
 using Zenject;
@@ -48,7 +49,7 @@ namespace InGame
                 filename = Path.GetFileName(filepath)
             };
 
-            file.data = File.ReadAllBytes(filepath);
+            file.data = File.ReadAllBytes(filepath).ToList();
             files.Add(file);
 
             Refresh();
@@ -59,6 +60,6 @@ namespace InGame
     public class BinaryFile
     {
         public string filename;
-        public byte[] data;
+        public List<byte> data;
     }
 }

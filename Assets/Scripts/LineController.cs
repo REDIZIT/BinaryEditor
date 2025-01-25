@@ -1,5 +1,4 @@
-﻿using System;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 namespace InGame
@@ -39,10 +38,18 @@ namespace InGame
 
             lineIndexText.text = AddressToHex(line.index * 16);
 
-            for (int i = 0; i < bytes.Length; i++)
+            for (int i = 0; i < 16; i++)
             {
-                byteRows[i].Refresh(bytes[i]);
-                charRows[i].Refresh(bytes[i]);
+                if (i < bytes.Length)
+                {
+                    byteRows[i].Refresh(bytes[i]);
+                    charRows[i].Refresh(bytes[i]);
+                }
+                else
+                {
+                    byteRows[i].Clear();
+                    charRows[i].Clear();
+                }
             }
         }
 
