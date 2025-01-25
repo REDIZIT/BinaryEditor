@@ -37,7 +37,7 @@ namespace InGame
             rows.SetActive(true);
             empty.SetActive(false);
 
-            lineIndexText.text = LineIndexToHex(line.index);
+            lineIndexText.text = AddressToHex(line.index * 16);
 
             for (int i = 0; i < bytes.Length; i++)
             {
@@ -51,7 +51,9 @@ namespace InGame
             rows.SetActive(false);
             empty.SetActive(true);
 
-            lineIndexText.text = LineIndexToHex(line.index) + " - " + LineIndexToHex(line.zerosEndIndex);
+            int diff = line.zerosEndIndex - line.index + 1;
+
+            lineIndexText.text = AddressToHex(line.index * 16) + " - " + AddressToHex(line.zerosEndIndex * 16 + 15) + " <color=#666>=</color> " + diff + " <color=#666>lines of</color> zeros";
         }
 
         public void Clear()
@@ -68,9 +70,9 @@ namespace InGame
             }
         }
 
-        private string LineIndexToHex(int index)
+        private string AddressToHex(int address)
         {
-            string hex = index.ToString("x");
+            string hex = address.ToString("x");
             return "<color=#666>0x" + '0'.Multiply(8 - hex.Length) + "</color>" + hex;
         }
     }

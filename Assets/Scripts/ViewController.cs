@@ -59,15 +59,7 @@ namespace InGame
         {
             int addressLineIndex = address / 16;
 
-            for (int i = 0; i < lines.Count; i++)
-            {
-                Line line = lines[i];
-                if (line.index >= addressLineIndex)
-                {
-                    scroll = i;
-                    break;
-                }
-            }
+            scroll = AbsToVirtualLine(addressLineIndex);
 
             OnChange();
         }
@@ -96,6 +88,45 @@ namespace InGame
             }
 
             return absLine;
+        }
+        public int AbsToVirtualLine(int absLine)
+        {
+            for (int i = 0; i < lines.Count; i++)
+            {
+                Line line = lines[i];
+
+                if (line.zerosEndIndex == 0)
+                {
+                    if (line.index == absLine)
+                    {
+                        return i;
+                    }
+                }
+                else
+                {
+                    if (absLine >= line.index && absLine <= line.zerosEndIndex)
+                    {
+                        return i;
+                    }
+                }
+            }
+
+            return -1;
+
+            // for (int i = 0; i < absLine; i++)
+            // {
+            //     if (i >= lines.Count) return -1;
+            //
+            //     Line line = lines[virtualLine];
+            //     virtualLine++;
+            //
+            //     if (line.zerosEndIndex != 0)
+            //     {
+            //         i = line.zerosEndIndex;
+            //     }
+            // }
+            //
+            // return virtualLine;
         }
 
         private void HandleLinesRaw()

@@ -14,8 +14,10 @@ namespace InGame
 
         private bool[,] map;
 
-        private List<Selection> selections = new();
+        public List<Selection> selections = new();
         private List<SelectionBlock> blocks = new();
+
+        private int verticalRectFirstSelection;
 
         private void Start()
         {
@@ -25,6 +27,11 @@ namespace InGame
 
         private void Update()
         {
+            if (!Input.GetKey(KeyCode.LeftControl) || !Input.GetKey(KeyCode.LeftShift))
+            {
+                verticalRectFirstSelection = -1;
+            }
+
             if (Input.GetMouseButtonDown(0))
             {
                 Vector2 screenPos = Input.mousePosition;
@@ -36,18 +43,65 @@ namespace InGame
                     address = Mathf.Clamp(address, 0, view.File.data.Length);
 
 
-                    if (Input.GetKey(KeyCode.LeftControl))
+                    if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift))
                     {
+                        //
+                        // Rect selection
+                        //
+                        if (verticalRectFirstSelection == -1)
+                        {
+                            // If first time rect used
+                            verticalRectFirstSelection = selections.Count - 1;
+                        }
+                        else
+                        {
+                            selections.RemoveRange(verticalRectFirstSelection + 1, selections.Count - verticalRectFirstSelection - 1);
+                        }
+
+                        Selection lastSelection = selections[verticalRectFirstSelection];
+
+                        Vector2 a = new Vector2(lastSelection.end % 16, lastSelection.end / 16);
+                        Vector2 b = new Vector2(address % 16, address / 16);
+
+                        Vector2 min = new Vector2(Mathf.Min(a.x, b.x), Mathf.Min(a.y, b.y));
+                        Vector2 max = new Vector2(Mathf.Max(a.x, b.x), Mathf.Max(a.y, b.y));
+
+                        int a_x = (int)min.x;
+                        int b_x = (int)max.x;
+                        int delta_x = b_x - a_x;
+
+                        int a_y = (int)min.y;
+                        int b_y = (int)max.y;
+                        int delta_y = b_y - a_y;
+
+                        for (int y = 0; y <= delta_y; y++)
+                        {
+                            int begin = a_y * 16 + a_x + y * 16;
+                            int end = begin + delta_x;
+                            selections.Add(new(begin, end));
+                        }
+                    }
+                    else if (Input.GetKey(KeyCode.LeftControl))
+                    {
+                        //
+                        // Single selection
+                        //
                         selections.Add(new Selection(address));
                     }
                     else if (Input.GetKey(KeyCode.LeftShift) && selections.Count > 0)
                     {
+                        //
+                        // Continues list selection
+                        //
                         Selection lastSelection = selections.Last();
                         if (address > lastSelection.end) selections.Add(new(lastSelection.end, address));
                         else selections.Add(new(address, lastSelection.begin));
                     }
                     else
                     {
+                        //
+                        // Drop selection and select single
+                        //
                         selections.Clear();
                         selections.Add(new Selection(address));
                     }
@@ -56,35 +110,54 @@ namespace InGame
                 }
             }
 
-            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.C))
+            if (selections.Count > 0)
             {
-                List<string> chars = new();
-                int lastIndex = -1;
-                foreach (Selection selection in selections)
+                if (Input.GetKeyDown(KeyCode.Escape))
                 {
-                    int selectionBeginLine = selection.begin / 16;
-                    int selectionEndLine = selection.end / 16;
-
-                    int realBegin = view.VirtualToAbsLine(selectionBeginLine) / 16 + selection.begin % 16;
-
-                    int realEnd = view.VirtualToAbsLine(selectionEndLine) / 16 + selection.end % 16;
-
-                    for (int i = realBegin; i <= realEnd; i++)
-                    {
-                        if (i <= lastIndex) continue;
-                        lastIndex = i;
-
-                        byte b = view.File.data[i];
-                        chars.Add(b.ToString("x2"));
-                    }
+                    selections.Clear();
+                    Refresh();
                 }
-
-                // string str = Encoding.ASCII.GetString(byteArray); // Copy as ASCII characters
-                string str = string.Concat(chars);
-
-                Debug.Log(str);
-                GUIUtility.systemCopyBuffer = str;
+                if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.C))
+                {
+                    CopySelection();
+                }
             }
+        }
+
+        private void CopySelection()
+        {
+            if (selections.Count == 0) return;
+
+            List<string> chars = new();
+            int lastIndex = -1;
+
+            HashSet<int> selectedAddresses = new();
+
+            foreach (Selection selection in selections)
+            {
+                int selectionBeginLine = selection.begin / 16;
+                int selectionEndLine = selection.end / 16;
+
+                int realBegin = view.VirtualToAbsLine(selectionBeginLine) * 16 + selection.begin % 16;
+
+                int realEnd = view.VirtualToAbsLine(selectionEndLine) * 16 + selection.end % 16;
+
+                for (int i = realBegin; i <= realEnd; i++)
+                {
+                    selectedAddresses.Add(i);
+                }
+            }
+
+            foreach (int address in selectedAddresses.OrderBy(a => a))
+            {
+                byte b = view.File.data[address];
+                chars.Add(b.ToString("x2"));
+            }
+
+            // string str = Encoding.ASCII.GetString(byteArray); // Copy as ASCII characters
+            string str = string.Concat(chars);
+
+            GUIUtility.systemCopyBuffer = str;
         }
 
         private void ClearBlocks()

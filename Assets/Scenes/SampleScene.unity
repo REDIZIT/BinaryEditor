@@ -649,6 +649,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   field: {fileID: 181665281}
+  focusSprite: {fileID: 3946597645170758279, guid: b7d28da27845d3b42b66200eb031aee5, type: 3}
+  invalidSprite: {fileID: -9129120294432375109, guid: 08c32e735ee1a3f4e99c3f22f2645e45, type: 3}
+  defaultSprite: {fileID: 8646405055033196530, guid: 16d2a957e6021ba488bbe409fb1f3c93, type: 3}
 --- !u!114 &387225705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2950,6 +2953,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1738727814}
     m_Modifications:
+    - target: {fileID: 263282504200450394, guid: 8586451a261ed994ba88e3ba8a4468dd, type: 3}
+      propertyPath: m_enableWordWrapping
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7598680639623748248, guid: 8586451a261ed994ba88e3ba8a4468dd, type: 3}
       propertyPath: m_Name
       value: InputField
@@ -3032,6 +3039,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8608028675239041067, guid: 8586451a261ed994ba88e3ba8a4468dd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8920168541831318436, guid: 8586451a261ed994ba88e3ba8a4468dd, type: 3}
+      propertyPath: m_LineType
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
