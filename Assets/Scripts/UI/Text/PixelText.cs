@@ -52,7 +52,7 @@ namespace InGame
 
         private List<Char> preprocessChars = new();
         private static List<int> triangles = new();
-        private Vector2 fontSheetSize;
+        private Vector2 uv_characterSize;
 
         private Rect prevRect;
         private Vector2 prevPos;
@@ -221,8 +221,6 @@ namespace InGame
             uvs.Clear();
             colors.Clear();
 
-            Debug.Log("RebuildMesh for " + message.Length);
-
             //
             // Preprocess
             //
@@ -232,7 +230,8 @@ namespace InGame
             //
             // Mesh building
             //
-            fontSheetSize = new(font.material.mainTexture.width, font.material.mainTexture.height);
+            Vector2 fontSheetSize = new(font.material.mainTexture.width, font.material.mainTexture.height);
+            uv_characterSize = new(font.characterSize.x / fontSheetSize.x, font.characterSize.y / fontSheetSize.y);
             BuildText(lines);
 
 
@@ -564,9 +563,6 @@ namespace InGame
             verts.Add(offset + new Vector3(0, meshSize.y, 0));
             verts.Add(offset + new Vector3(meshSize.x, meshSize.y, 0));
             verts.Add(offset + new Vector3(meshSize.x, 0, 0));
-
-
-            Vector2 uv_characterSize = new(font.characterSize.x / fontSheetSize.x, font.characterSize.y / fontSheetSize.y);
 
 
             Vector2Int characterIndex = font.GetCharacterIndex(character.character);
