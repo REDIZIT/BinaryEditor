@@ -3976,7 +3976,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.88, y: 0.08}
+  m_AnchoredPosition: {x: -0.88, y: 3.24}
   m_SizeDelta: {x: 135.6578, y: 61.8717}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1054705961
@@ -3991,9 +3991,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f52d170f1603d434ead34fa0bd790e46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: 'Some words here
+  text: 'This is my text
 
-    and multilines'
+    with multilines'
   font: {fileID: 11400000, guid: 2febd63c4ad51ff4da6c00caa0b8b6fd, type: 2}
   fontScale: 1
   verticalAlignment: -1
@@ -4327,7 +4327,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0.13000488, y: 0.16999817}
+  m_AnchoredPosition: {x: 0.13000488, y: 0.009994507}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1253239191
@@ -4866,7 +4866,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 135.6578, y: 0}
+  m_AnchoredPosition: {x: 135.6578, y: -11}
   m_SizeDelta: {x: 135.6578, y: 61.8717}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &1393880193

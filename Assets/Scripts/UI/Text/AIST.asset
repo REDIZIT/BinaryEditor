@@ -14,24 +14,494 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: b2c75c278c1036e43844f35b8c75f7b1, type: 2}
   characterSize: {x: 6, y: 11}
+  characterRects:
+  - character: 65
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 66
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 67
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 68
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 69
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 70
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 71
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 72
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 73
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 74
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 75
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 76
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 77
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 78
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 79
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 80
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 81
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 82
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 83
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 84
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 85
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 86
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 87
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 88
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 89
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 90
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 97
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 98
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 99
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 100
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 101
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 102
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 103
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 104
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 105
+    widthInPixels: 1
+    offsetXInPixels: 1
+  - character: 106
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 107
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 108
+    widthInPixels: 1
+    offsetXInPixels: 1
+  - character: 109
+    widthInPixels: 5
+    offsetXInPixels: 1
+  - character: 110
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 111
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 112
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 113
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 114
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 115
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 116
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 117
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 118
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 119
+    widthInPixels: 5
+    offsetXInPixels: 1
+  - character: 120
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 121
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 122
+    widthInPixels: 3
+    offsetXInPixels: 1
+  - character: 48
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 49
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 50
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 51
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 52
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 53
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 54
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 55
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 56
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 57
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 33
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 39
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 34
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 35
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 38
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 37
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 40
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 41
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 91
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 93
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 123
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 125
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 43
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 45
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 42
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 47
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 94
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 46
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 44
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 58
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 59
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 60
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 62
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 61
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 126
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 63
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 64
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 96
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 95
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 124
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1040
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1041
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1042
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1043
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1044
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1045
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1025
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1046
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1047
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1048
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1049
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1050
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1051
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1052
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1053
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1054
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1055
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1056
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1057
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1058
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1059
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1060
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1061
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1062
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1063
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1064
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1065
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1066
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1067
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1068
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1069
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1070
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1071
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1072
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1073
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1074
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1075
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1076
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1077
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1105
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1078
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1079
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1080
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1081
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1082
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1083
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1084
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1085
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1086
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1087
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1088
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1089
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1090
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1091
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1092
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1093
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1094
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1095
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1096
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1097
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1098
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1099
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1100
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1101
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1102
+    widthInPixels: 6
+    offsetXInPixels: 0
+  - character: 1103
+    widthInPixels: 6
+    offsetXInPixels: 0
   characters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz\n0123456789\n!'\"#&%()[]{}+-*/^.,:;<>=~?@`_|\n\u0410\u0411\u0412\u0413\u0414\u0415\u0401\u0416\u0417\u0418\u0419\u041A\u041B\u041C\u041D\u041E\u041F\u0420\u0421\u0422\u0423\u0424\u0425\u0426\u0427\u0428\u0429\u042A\u042B\u042C\u042D\u042E\u042F\n\u0430\u0431\u0432\u0433\u0434\u0435\u0451\u0436\u0437\u0438\u0439\u043A\u043B\u043C\u043D\u043E\u043F\u0440\u0441\u0442\u0443\u0444\u0445\u0446\u0447\u0448\u0449\u044A\u044B\u044C\u044D\u044E\u044F"
-  spaceSize: 5
-  margins:
-  - characters: li
-    left: 0
-    right: -4
-  - characters: abcdefghijklnopqrstuvxyz
-    left: 0
-    right: -2
-  - characters: "\u0430\u0431\u0432\u0433\u0434\u0435\u0451\u0436\u0437\u0438\u0439\u043A\u043B\u043D\u043E\u043F\u0440\u0441\u0442\u0443\u0444\u0445\u0446\u0447\u0448\u0449\u044A\u044B\u044C\u044D\u044E\u044F"
-    left: 0
-    right: -2
-  - characters: ABCDEFGHIJKLMNOPQRSTUVWXYZ
-    left: 0
-    right: -1
-  - characters: "\u0410\u0411\u0412\u0413\u0414\u0415\u0401\u0416\u0417\u0418\u0419\u041A\u041B\u041C\u041D\u041E\u041F\u0420\u0421\u0422\u0423\u0424\u0425\u0426\u0427\u0428\u0429\u042A\u042B\u042C\u042D\u042E\u042F"
-    left: 0
-    right: -1
-  - characters: ':'
-    left: 0
-    right: -4
+  spaceSize: 6
+  characterSpacing: 1
+  generationMode: 0
+  doGenerate: 0
+  fontSheet: {fileID: 2800000, guid: 5b72aa140d8439a45b57b25b255f0588, type: 3}
+  widthGroups:
+  - characters: abcdefghjknopqrstuvxyz
+    width: 3
+    offsetX: 1
+  - characters: wm
+    width: 5
+    offsetX: 1
+  - characters: il
+    width: 1
+    offsetX: 1

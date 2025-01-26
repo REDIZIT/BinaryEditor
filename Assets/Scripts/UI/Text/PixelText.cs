@@ -51,6 +51,12 @@ namespace InGame
         {
             public char[] characters;
             public int widthInPixels;
+
+            public Word(List<char> chars)
+            {
+                characters = chars.ToArray();
+                widthInPixels = 0;
+            }
         }
 
 
@@ -152,10 +158,7 @@ namespace InGame
 
                 if (character == ' ')
                 {
-                    Word word = new Word()
-                    {
-                        characters = currentWord.ToArray()
-                    };
+                    Word word = new Word(currentWord);
                     word.widthInPixels = GetStringWidth(word.characters);
 
                     words.Add(word);
@@ -164,6 +167,15 @@ namespace InGame
                 }
                 else if (character == '\n')
                 {
+                    if (currentWord.Count > 0)
+                    {
+                        Word word = new(currentWord);
+                        word.widthInPixels = GetStringWidth(word.characters);
+
+                        words.Add(word);
+                        currentWord.Clear();
+                    }
+
                     Line line = new()
                     {
                         words = words.ToArray()
@@ -222,16 +234,18 @@ namespace InGame
                 // Per-line section
                 Line line = lines[i];
 
-                int lineWidthWithSpaces = line.widthInPixels + Mathf.Max(0, (line.words.Length - 1) * font.spaceSize);
+                int lineWidthInPixels = line.widthInPixels;
+                lineWidthInPixels += Mathf.Max(0, (line.words.Length - 1) * font.spaceSize);
+                lineWidthInPixels += line.words.Sum(w => Mathf.Max(0, (w.characters.Length - 1) * font.characterSpacing));
 
                 offset.x = 0;
                 if (horiztonalAlignment == TextHoriztonalAlignment.Middle)
                 {
-                    offset.x -= lineWidthWithSpaces / 2f;
+                    offset.x -= lineWidthInPixels / 2f;
                 }
                 else if (horiztonalAlignment == TextHoriztonalAlignment.Right)
                 {
-                    offset.x -= lineWidthWithSpaces;
+                    offset.x -= lineWidthInPixels;
                 }
 
                 for (int j = 0; j < line.words.Length; j++)
@@ -243,10 +257,16 @@ namespace InGame
                     {
                         // Per-character section
                         char character = word.characters[k];
-                        AppendCharacter(verts, uvs, character, offset);
+                        CharacterRect characterRect = font.GetCharacterRect(character);
 
-                        Margin margin = font.GetMargin(character);
-                        offset.x += font.characterSize.x + margin.right;
+                        AppendCharacter(verts, uvs, character, offset - new Vector3(characterRect.offsetXInPixels, 0, 0));
+                        offset.x += characterRect.widthInPixels;
+
+                        // Do not add character spacing for last character
+                        if (k < word.characters.Length - 1)
+                        {
+                            offset.x += font.characterSpacing;
+                        }
                     }
 
                     offset.x += font.spaceSize;
@@ -263,8 +283,7 @@ namespace InGame
 
             for (var i = 0; i < message.Length; i++)
             {
-                Margin margin = font.GetMargin(message[i]);
-                width += font.characterSize.x + margin.right;
+                width += font.GetCharacterRect(message[i]).widthInPixels;
             }
 
             return width;

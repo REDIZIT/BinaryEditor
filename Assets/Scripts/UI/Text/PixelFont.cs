@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace InGame
 {
@@ -8,12 +9,41 @@ namespace InGame
         public Material material;
         public Vector2Int characterSize;
 
+
+        public List<CharacterRect> characterRects;
+
         [TextArea(3, 12)]
         public string characters;
 
         public int spaceSize = 6;
+        public int characterSpacing = 1;
 
-        public Margin[] margins;
+        [Header("Font generator")]
+        public GenerateMode generationMode;
+        public bool doGenerate;
+
+        [Header("- From sprites settings")]
+        public Texture2D fontSheet;
+
+        [Header("- From width groups settings")]
+        public WidthGroup[] widthGroups;
+
+        public enum GenerateMode
+        {
+            FromWidthGroups,
+            FromSpriteSheet,
+        }
+
+        private void OnValidate()
+        {
+            if (doGenerate)
+            {
+                doGenerate = false;
+
+                if (generationMode == GenerateMode.FromWidthGroups) PixelFontGenerator.GenerateFromWidthGroups(this);
+                if (generationMode == GenerateMode.FromSpriteSheet) PixelFontGenerator.GenerateFromSprites(this);
+            }
+        }
 
         public Vector2Int GetCharacterIndex(char character)
         {
@@ -38,24 +68,35 @@ namespace InGame
             return index;
         }
 
-        public Margin GetMargin(char character)
+        public CharacterRect GetCharacterRect(char character)
         {
-            foreach (Margin margin in margins)
+            foreach (CharacterRect rect in characterRects)
             {
-                if (margin.characters.Contains(character))
-                {
-                    return margin;
-                }
+                if (rect.character == character) return rect;
             }
+
+            throw new($"Character rect not found for '{character}'");
 
             return default;
         }
     }
 
     [System.Serializable]
-    public struct Margin
+    public struct WidthGroup
     {
         public string characters;
-        public int left, right;
+        public int width, offsetX;
+    }
+
+    [System.Serializable]
+    public struct CharacterRect
+    {
+        public char character;
+        public int widthInPixels, offsetXInPixels;
+
+        public override string ToString()
+        {
+            return character.ToString();
+        }
     }
 }
