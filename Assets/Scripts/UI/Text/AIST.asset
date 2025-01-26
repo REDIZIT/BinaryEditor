@@ -175,8 +175,8 @@ MonoBehaviour:
     widthInPixels: 6
     offsetXInPixels: 0
   - character: 49
-    widthInPixels: 6
-    offsetXInPixels: 0
+    widthInPixels: 1
+    offsetXInPixels: 1
   - character: 50
     widthInPixels: 6
     offsetXInPixels: 0
@@ -253,14 +253,14 @@ MonoBehaviour:
     widthInPixels: 6
     offsetXInPixels: 0
   - character: 46
-    widthInPixels: 6
-    offsetXInPixels: 0
+    widthInPixels: 1
+    offsetXInPixels: 1
   - character: 44
     widthInPixels: 6
     offsetXInPixels: 0
   - character: 58
-    widthInPixels: 6
-    offsetXInPixels: 0
+    widthInPixels: 1
+    offsetXInPixels: 1
   - character: 59
     widthInPixels: 6
     offsetXInPixels: 0
@@ -502,6 +502,6 @@ MonoBehaviour:
   - characters: wm
     width: 5
     offsetX: 1
-  - characters: il
+  - characters: 'il1.:'
     width: 1
     offsetX: 1

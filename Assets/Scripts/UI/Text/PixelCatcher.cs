@@ -5,9 +5,11 @@ namespace InGame
     [ExecuteAlways]
     public class PixelCatcher : MonoBehaviour
     {
+        public Vector2 localPosition;
+
         private RectTransform rect, parentRect;
 
-        private void Awake()
+        private void Start()
         {
             rect = GetComponent<RectTransform>();
             parentRect = transform.parent.GetComponent<RectTransform>();
@@ -15,7 +17,7 @@ namespace InGame
 
         private void LateUpdate()
         {
-            rect.anchoredPosition = GetWorldPosCorrection(Vector2.zero);
+            rect.anchoredPosition = GetWorldPosCorrection(localPosition);
         }
 
         private Vector2 GetWorldPosCorrection(Vector2 floatingLocalPos)
@@ -25,7 +27,9 @@ namespace InGame
 
             Vector2 delta = rectWorldPos - rectWorldPosRounded;
 
-            return -delta / 2f;
+            Vector2 correctedPos = floatingLocalPos - delta / 2f;
+
+            return correctedPos;
         }
     }
 }

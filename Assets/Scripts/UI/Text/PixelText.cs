@@ -35,9 +35,13 @@ namespace InGame
         [SerializeField] private TextVerticalAlignment verticalAlignment = TextVerticalAlignment.Top;
         [SerializeField] private TextHoriztonalAlignment horiztonalAlignment = TextHoriztonalAlignment.Left;
 
-        [SerializeField] private CanvasRenderer rend;
+        private GameObject rendererInst;
+        private RectTransform rendRect;
+        private CanvasRenderer rend;
+        private PixelCatcher catcher;
 
-        private RectTransform rect, rendRect;
+
+        private RectTransform rect;
         private Mesh mesh;
 
         private List<Vector3> verts = new();
@@ -66,10 +70,54 @@ namespace InGame
         }
 
 
+        private void OnEnable()
+        {
+            Awake();
+        }
+
+        private void OnDisable()
+        {
+            OnDestroy();
+        }
+
+        private void OnValidate()
+        {
+            OnEnable();
+            Awake();
+            Start();
+            RebuildText();
+        }
+
         private void Awake()
         {
-            rect = GetComponent<RectTransform>();
-            rendRect = rend.GetComponent<RectTransform>();
+            if (rendererInst == null)
+            {
+                PixelCatcher potentialRenderer = transform.GetComponentInChildren<PixelCatcher>();
+
+                if (potentialRenderer == null || potentialRenderer.GetComponent<CanvasRenderer>() == null)
+                {
+                    rendererInst = new GameObject("Text renderer", typeof(RectTransform), typeof(CanvasRenderer), typeof(PixelCatcher));
+                    rendererInst.transform.SetParent(transform);
+                    rendererInst.transform.localScale = Vector3.one;
+
+                    rendRect = rendererInst.GetComponent<RectTransform>();
+                    rendRect.anchorMin = Vector2.zero;
+                    rendRect.anchorMax = Vector2.zero;
+                    rendRect.pivot = Vector2.zero;
+                    rendRect.sizeDelta = Vector2.zero;
+                }
+                else
+                {
+                    rendererInst = potentialRenderer.gameObject;
+                }
+            }
+
+            if (rend == null || catcher == null || rect == null)
+            {
+                rend = rendererInst.GetComponent<CanvasRenderer>();
+                catcher = rendererInst.GetComponent<PixelCatcher>();
+                rect = GetComponent<RectTransform>();
+            }
         }
 
         private void Start()
@@ -93,6 +141,8 @@ namespace InGame
 
         private void Update()
         {
+            Awake();
+
             if (rect.rect != prevRect || prevPos != rect.anchoredPosition)
             {
                 prevRect = rect.rect;
@@ -100,15 +150,10 @@ namespace InGame
                 OnValidate();
             }
 
-            rendRect.anchoredPosition = GetTextPosition();
-            rendRect.sizeDelta = rect.sizeDelta;
-        }
-
-        private void OnValidate()
-        {
-            Awake();
-            Start();
-            RebuildText();
+            if (font != null)
+            {
+                catcher.localPosition = GetTextPosition();
+            }
         }
 
         private void RebuildText()
@@ -123,7 +168,8 @@ namespace InGame
             }
 
             rend.SetMesh(mesh);
-            rend.SetMaterial(font.material, null);
+
+            if (font != null) rend.SetMaterial(font.material, null);
         }
 
         private void ClearMesh()
@@ -162,6 +208,7 @@ namespace InGame
             List<Line> lines = new();
             List<Word> words = new();
             List<char> currentWord = new();
+
             for (int i = 0; i < message.Length; i++)
             {
                 char character = message[i];
@@ -337,11 +384,6 @@ namespace InGame
         {
             Vector2 meshSize = font.characterSize * fontScale;
 
-            // float magicOffset = 0.01f;
-            //
-            // meshSize.y += magicOffset * 2;
-            // offset.y -= magicOffset;
-
             verts.Add(offset + new Vector3(0, 0, 0));
             verts.Add(offset + new Vector3(0, meshSize.y, 0));
             verts.Add(offset + new Vector3(meshSize.x, meshSize.y, 0));
@@ -365,15 +407,13 @@ namespace InGame
 
         private Vector2 GetTextPosition()
         {
-            Vector2 center = rect.rect.center;
             Vector2 halfsize = rect.rect.size / 2f;
 
             Vector3 startPos = Vector3.zero;
 
-            startPos.x = center.x + halfsize.x * (int)horiztonalAlignment;
-            startPos.y = center.y + halfsize.y * (int)verticalAlignment;
+            startPos.x = halfsize.x * (int)horiztonalAlignment;
+            startPos.y = halfsize.y * (int)verticalAlignment;
 
-            // if (verticalAlignment == TextVerticalAlignment.Top) startPos.y -= font.characterSize.y;
             startPos.y -= font.characterSize.y * fontScale;
 
             return startPos;
