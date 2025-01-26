@@ -28,11 +28,13 @@ namespace InGame
             if (selection.selections.Count == 0) return;
             if (view.File == null) return;
 
+            if (Extensions.IsInputFieldFocused()) return;
+
             if (Input.GetKeyDown(KeyCode.Backspace))
             {
                 Erase();
             }
-            else if (Input.GetKeyDown(KeyCode.Delete))
+            if (Input.GetKeyDown(KeyCode.Delete))
             {
                 Cutout();
             }

@@ -4,13 +4,14 @@ namespace InGame
 {
     public class Windows : MonoBehaviour
     {
-        [SerializeField] private Window gotoWindow;
+        [SerializeField] private Window gotoWindow, findWindow;
 
         private void Update()
         {
-            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.G))
+            if (Input.GetKey(KeyCode.LeftControl))
             {
-                gotoWindow.Switch();
+                if (Input.GetKeyDown(KeyCode.G)) gotoWindow.Switch();
+                if (Input.GetKeyDown(KeyCode.F)) findWindow.Switch();
             }
         }
     }

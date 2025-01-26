@@ -29,12 +29,14 @@ namespace InGame
 
         private void Update()
         {
+            if (view.File == null) return;
+
             if (!Input.GetKey(KeyCode.LeftControl) || !Input.GetKey(KeyCode.LeftShift))
             {
                 verticalRectFirstSelection = -1;
             }
 
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && Extensions.IsAnythingBlocksRay(transform) == false)
             {
                 Vector2 screenPos = Input.mousePosition;
                 Vector2Int cellPos = ScreenPosToCell(screenPos / canvas.scaleFactor);
@@ -228,6 +230,8 @@ namespace InGame
 
             foreach (Selection selection in selections)
             {
+                Debug.Log("Select: " + selection.begin.ToString("x") + ":" + selection.end.ToString("x"));
+
                 for (int i = selection.begin; i <= selection.end; i++)
                 {
                     int virtualAddress = view.AbsToVirtualLine(i / 16) * 16 + i % 16;

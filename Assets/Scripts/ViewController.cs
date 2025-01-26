@@ -46,7 +46,7 @@ namespace InGame
         {
             if (Input.mouseScrollDelta.y != 0)
             {
-                scroll -= (int)Input.mouseScrollDelta.y;
+                scroll -= (int)Input.mouseScrollDelta.y * (Input.GetKey(KeyCode.LeftShift) ? 10 : 1);
                 Refresh();
             }
         }
