@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Collections;
 using UnityEngine;
 
 namespace InGame
@@ -50,6 +52,7 @@ namespace InGame
 
         private List<Char> preprocessChars = new();
         private static List<int> triangles = new();
+        private Vector2 fontSheetSize;
 
         private Rect prevRect;
         private Vector2 prevPos;
@@ -63,21 +66,27 @@ namespace InGame
             public Word[] words;
             public int widthInPixels;
         }
-        private struct Word
+        private struct Word : IDisposable
         {
-            public Char[] characters;
+            public NativeArray<Char> characters;
             public int widthInPixels;
 
             public Word(List<Char> chars)
             {
                 widthInPixels = 0;
 
-                characters = new Char[chars.Count];
+                // characters = new Char[chars.Count];
+                characters = new NativeArray<Char>(chars.Count, Allocator.Temp);
 
                 for (int i = 0; i < chars.Count; i++)
                 {
                     characters[i] = chars[i];
                 }
+            }
+
+            public void Dispose()
+            {
+                characters.Dispose();
             }
         }
         private struct Char
@@ -223,6 +232,7 @@ namespace InGame
             //
             // Mesh building
             //
+            fontSheetSize = new(font.material.mainTexture.width, font.material.mainTexture.height);
             BuildText(lines);
 
 
@@ -413,10 +423,7 @@ namespace InGame
 
             if (currentWord.Count > 0)
             {
-                Word word = new Word()
-                {
-                    characters = currentWord.ToArray()
-                };
+                Word word = new Word(currentWord);
                 word.widthInPixels = GetStringWidth(word.characters);
 
                 words.Add(word);
@@ -431,6 +438,11 @@ namespace InGame
                 line.widthInPixels = words.Sum(w => w.widthInPixels);
 
                 lines.Add(line);
+            }
+
+            foreach (var word in words)
+            {
+                word.Dispose();
             }
 
             return lines;
@@ -502,7 +514,7 @@ namespace InGame
         }
 
 
-        private int GetStringWidth(Char[] message)
+        private int GetStringWidth(NativeArray<Char> message)
         {
             int width = 0;
 
@@ -554,8 +566,7 @@ namespace InGame
             verts.Add(offset + new Vector3(meshSize.x, 0, 0));
 
 
-            Vector2Int textureSize = new(font.material.mainTexture.width, font.material.mainTexture.height);
-            Vector2 uv_characterSize = new(font.characterSize.x / (float)textureSize.x, font.characterSize.y / (float)textureSize.y);
+            Vector2 uv_characterSize = new(font.characterSize.x / fontSheetSize.x, font.characterSize.y / fontSheetSize.y);
 
 
             Vector2Int characterIndex = font.GetCharacterIndex(character.character);
