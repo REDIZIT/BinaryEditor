@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace InGame
@@ -12,9 +13,9 @@ namespace InGame
 
     public enum TextHoriztonalAlignment
     {
-        Right = 1,
-        Middle = 0,
         Left = -1,
+        Middle = 0,
+        Right = 1,
     }
 
     [ExecuteAlways]
@@ -39,6 +40,19 @@ namespace InGame
         private Rect prevRect;
         private Vector2 prevPos;
         private Vector2 builtBounds;
+
+
+        private struct Line
+        {
+            public Word[] words;
+            public int widthInPixels;
+        }
+        private struct Word
+        {
+            public char[] characters;
+            public int widthInPixels;
+        }
+
 
         private void Awake()
         {
@@ -102,66 +116,158 @@ namespace InGame
         }
         private void RebuildMesh(string message)
         {
-            Vector3 offset = Vector3.zero;
-
             verts.Clear();
             uvs.Clear();
 
-            int charactersBuilt = 0;
+
+            //
+            // Preprocess
+            //
+            List<Line> lines = Preprocess(message);
+
+
+            //
+            // Mesh building
+            //
+            BuildText(lines);
+
+
+            mesh.Clear();
+            mesh.SetVertices(verts);
+            mesh.SetUVs(0, uvs);
+            AppendTriangles(verts.Count / 4);
+
+
+            RecalculateBounds();
+        }
+
+        private List<Line> Preprocess(string message)
+        {
+            List<Line> lines = new();
+            List<Word> words = new();
+            List<char> currentWord = new();
             for (int i = 0; i < message.Length; i++)
             {
                 char character = message[i];
 
                 if (character == ' ')
                 {
-                    offset.x += font.spaceSize;
+                    Word word = new Word()
+                    {
+                        characters = currentWord.ToArray()
+                    };
+                    word.widthInPixels = GetStringWidth(word.characters);
+
+                    words.Add(word);
+                    currentWord.Clear();
+                    // FIX: Double spaces
                 }
                 else if (character == '\n')
                 {
-                    offset.x = 0;
-                    offset.y -= font.characterSize.y;
+                    Line line = new()
+                    {
+                        words = words.ToArray()
+                    };
+                    line.widthInPixels = words.Sum(w => w.widthInPixels);
 
-                    if (horiztonalAlignment == TextHoriztonalAlignment.Middle)
-                    {
-                        ShiftLine(i, offset.x / 2f);
-                    }
-                    else if (horiztonalAlignment == TextHoriztonalAlignment.Right)
-                    {
-                        ShiftLine(i, offset.x);
-                    }
+                    lines.Add(line);
+                    words.Clear();
                 }
                 else
                 {
-                    AppendCharacter(verts, uvs, character, offset * fontScale);
-                    charactersBuilt++;
-
-                    Margin margin = font.GetMargin(character);
-                    offset.x += font.characterSize.x + margin.right;
+                    currentWord.Add(character);
                 }
             }
 
+            if (currentWord.Count > 0)
+            {
+                Word word = new Word()
+                {
+                    characters = currentWord.ToArray()
+                };
+                word.widthInPixels = GetStringWidth(word.characters);
 
+                words.Add(word);
+            }
 
+            if (words.Count > 0)
+            {
+                Line line = new()
+                {
+                    words = words.ToArray()
+                };
+                line.widthInPixels = words.Sum(w => w.widthInPixels);
 
-            mesh.Clear();
-            mesh.SetVertices(verts);
-            mesh.SetUVs(0, uvs);
-            AppendTriangles(charactersBuilt);
+                lines.Add(line);
+            }
 
-
-            RecalculateBounds();
+            return lines;
         }
 
-        private void ShiftLine(int charsCount, float offset)
+        private void BuildText(List<Line> lines)
         {
-            for (int i = 0; i < charsCount * 4; i++)
+            // Per-textblock section
+            Vector3 offset = Vector3.zero;
+            if (verticalAlignment == TextVerticalAlignment.Middle)
             {
-                int vertIndex = verts.Count - i - 1;
-
-                Vector3 vert = verts[vertIndex];
-                vert.x -= offset;
-                verts[vertIndex] = vert;
+                offset.y = (lines.Count * font.characterSize.y) / 2f;
             }
+            else if (verticalAlignment == TextVerticalAlignment.Bottom)
+            {
+                offset.y = lines.Count * font.characterSize.y;
+            }
+
+            for (int i = 0; i < lines.Count; i++)
+            {
+                // Per-line section
+                Line line = lines[i];
+
+                int lineWidthWithSpaces = line.widthInPixels + Mathf.Max(0, (line.words.Length - 1) * font.spaceSize);
+
+                offset.x = 0;
+                if (horiztonalAlignment == TextHoriztonalAlignment.Middle)
+                {
+                    offset.x -= lineWidthWithSpaces / 2f;
+                }
+                else if (horiztonalAlignment == TextHoriztonalAlignment.Right)
+                {
+                    offset.x -= lineWidthWithSpaces;
+                }
+
+                for (int j = 0; j < line.words.Length; j++)
+                {
+                    // Per-word section
+                    Word word = line.words[j];
+
+                    for (int k = 0; k < word.characters.Length; k++)
+                    {
+                        // Per-character section
+                        char character = word.characters[k];
+                        AppendCharacter(verts, uvs, character, offset);
+
+                        Margin margin = font.GetMargin(character);
+                        offset.x += font.characterSize.x + margin.right;
+                    }
+
+                    offset.x += font.spaceSize;
+                }
+
+                offset.y -= font.characterSize.y;
+            }
+        }
+
+
+        private int GetStringWidth(char[] message)
+        {
+            int width = 0;
+
+            for (var i = 0; i < message.Length; i++)
+            {
+                Margin margin = font.GetMargin(message[i]);
+                width += font.characterSize.x + margin.right;
+            }
+
+            return width;
         }
 
         private void AppendTriangles(int charactersBuilt)
@@ -233,16 +339,8 @@ namespace InGame
             startPos.x = center.x + halfsize.x * (int)horiztonalAlignment;
             startPos.y = center.y + halfsize.y * (int)verticalAlignment;
 
-            if (verticalAlignment == TextVerticalAlignment.Top) startPos.y -= font.characterSize.y;
-
-            // if (horiztonalAlignment == TextHoriztonalAlignment.Middle)
-            // {
-            //     startPos.x -= builtBounds.x / 2f;
-            // }
-            // else if (horiztonalAlignment == TextHoriztonalAlignment.Right)
-            // {
-            //     startPos.x -= builtBounds.x;
-            // }
+            // if (verticalAlignment == TextVerticalAlignment.Top) startPos.y -= font.characterSize.y;
+            startPos.y -= font.characterSize.y;
 
             return startPos;
         }
