@@ -9,7 +9,6 @@ namespace InGame
         public Material material;
         public Vector2Int characterSize;
 
-
         public List<CharacterRect> characterRects;
 
         [TextArea(3, 12)]
@@ -64,7 +63,7 @@ namespace InGame
                 }
             }
 
-            Debug.Log("Unknown character: " + character);
+            // Debug.Log("Unknown character: " + character);
             return index;
         }
 
@@ -75,9 +74,9 @@ namespace InGame
                 if (rect.character == character) return rect;
             }
 
-            throw new($"Character rect not found for '{character}'");
+            // Debug.LogError($"Character rect not found for '{character}'");
 
-            return default;
+            return characterRects[0];
         }
     }
 

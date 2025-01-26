@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: b2c75c278c1036e43844f35b8c75f7b1, type: 2}
   characterSize: {x: 6, y: 11}
+  characterPadding: {x: 0, y: 1}
   characterRects:
   - character: 65
     widthInPixels: 6
@@ -211,8 +212,8 @@ MonoBehaviour:
     widthInPixels: 6
     offsetXInPixels: 0
   - character: 35
-    widthInPixels: 6
-    offsetXInPixels: 0
+    widthInPixels: 5
+    offsetXInPixels: 1
   - character: 38
     widthInPixels: 6
     offsetXInPixels: 0
@@ -496,11 +497,11 @@ MonoBehaviour:
   doGenerate: 0
   fontSheet: {fileID: 2800000, guid: 5b72aa140d8439a45b57b25b255f0588, type: 3}
   widthGroups:
+  - characters: wm#
+    width: 5
+    offsetX: 1
   - characters: abcdefghjknopqrstuvxyz
     width: 3
-    offsetX: 1
-  - characters: wm
-    width: 5
     offsetX: 1
   - characters: 'il1.:'
     width: 1

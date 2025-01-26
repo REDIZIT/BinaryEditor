@@ -4,36 +4,29 @@ using UnityEngine;
 
 namespace InGame
 {
-    public enum TextVerticalAlignment
-    {
-        Top = 1,
-        Middle = 0,
-        Bottom = -1,
-    }
-
-    public enum TextHoriztonalAlignment
-    {
-        Left = -1,
-        Middle = 0,
-        Right = 1,
-    }
-
     [ExecuteAlways]
     public class PixelText : MonoBehaviour
     {
-        public int FontScale
+        public float FontScale
         {
             get => fontScale;
-            set { fontScale = value; RebuildText(); }
+            set { fontScale = value; Dirty(); }
+        }
+
+        public string text
+        {
+            get => _text;
+            set { _text = value; Dirty(); }
         }
 
         [TextArea(3, 12)]
-        [SerializeField] private string text;
+        [SerializeField] private string _text;
 
         [SerializeField] private PixelFont font;
-        [SerializeField] private int fontScale = 1;
+        [SerializeField] private float fontScale = 1;
         [SerializeField] private TextVerticalAlignment verticalAlignment = TextVerticalAlignment.Top;
         [SerializeField] private TextHoriztonalAlignment horiztonalAlignment = TextHoriztonalAlignment.Left;
+        [SerializeField] private Color color = Color.white;
 
         private GameObject rendererInst;
         private RectTransform rendRect;
@@ -46,10 +39,13 @@ namespace InGame
 
         private List<Vector3> verts = new();
         private List<Vector2> uvs = new();
+        private List<Color> colors = new();
 
         private Rect prevRect;
         private Vector2 prevPos;
         private Vector2 builtBounds;
+
+        private bool isDirty;
 
 
         private struct Line
@@ -59,14 +55,28 @@ namespace InGame
         }
         private struct Word
         {
-            public char[] characters;
+            public Char[] characters;
             public int widthInPixels;
 
-            public Word(List<char> chars)
+            public Word(List<Char> chars)
             {
                 characters = chars.ToArray();
                 widthInPixels = 0;
             }
+        }
+        private struct Char
+        {
+            public char character;
+            public Color color;
+        }
+
+        private struct Tag
+        {
+            public int firstOpenIndex;
+            public int firstCloseIndex;
+            public int secondOpenIndex;
+            public int secondCloseIndex;
+            public Color color;
         }
 
 
@@ -101,8 +111,6 @@ namespace InGame
                     rendererInst.transform.localScale = Vector3.one;
 
                     rendRect = rendererInst.GetComponent<RectTransform>();
-                    rendRect.anchorMin = Vector2.zero;
-                    rendRect.anchorMax = Vector2.zero;
                     rendRect.pivot = Vector2.zero;
                     rendRect.sizeDelta = Vector2.zero;
                 }
@@ -143,6 +151,11 @@ namespace InGame
         {
             Awake();
 
+            if (isDirty)
+            {
+                RebuildText();
+            }
+
             if (rect.rect != prevRect || prevPos != rect.anchoredPosition)
             {
                 prevRect = rect.rect;
@@ -158,13 +171,13 @@ namespace InGame
 
         private void RebuildText()
         {
-            if (string.IsNullOrWhiteSpace(text) || font == null)
+            if (string.IsNullOrWhiteSpace(_text) || font == null)
             {
                 ClearMesh();
             }
             else
             {
-                RebuildMesh(text);
+                RebuildMesh(_text);
             }
 
             rend.SetMesh(mesh);
@@ -180,6 +193,7 @@ namespace InGame
         {
             verts.Clear();
             uvs.Clear();
+            colors.Clear();
 
 
             //
@@ -198,22 +212,136 @@ namespace InGame
             mesh.SetVertices(verts);
             mesh.SetUVs(0, uvs);
             AppendTriangles(verts.Count / 4);
+            mesh.SetColors(colors);
 
 
             RecalculateBounds();
+        }
+
+        private List<Char> PreprocessRichText(string message)
+        {
+            List<Char> chars = new();
+
+            bool isTagCollecting = false;
+
+            List<Tag> tags = new();
+            Tag currentTag = default;
+
+            // <color=#123>my text</color>
+
+            for (int i = 0; i < message.Length; i++)
+            {
+                char character = message[i];
+
+                if (character == '<')
+                {
+                    if (isTagCollecting)
+                    {
+                        if (i < message.Length && message[i + 1] == '/')
+                        {
+                            // second <
+                            currentTag.secondOpenIndex = i;
+                        }
+                        else
+                        {
+                            isTagCollecting = false;
+                        }
+                    }
+                    else
+                    {
+                        // first <
+                        isTagCollecting = true;
+                        currentTag.firstOpenIndex = i;
+                    }
+                }
+                else if (character == '>')
+                {
+                    if (isTagCollecting)
+                    {
+                        if (currentTag.firstCloseIndex == 0)
+                        {
+                            // first >
+                            currentTag.firstCloseIndex = i;
+                        }
+                        else
+                        {
+                            // second >
+                            currentTag.secondCloseIndex = i;
+                            isTagCollecting = false;
+
+                            int hexIndex = currentTag.firstOpenIndex + "color=".Length + 1;
+                            int hexLength = currentTag.firstCloseIndex - hexIndex;
+                            ColorUtility.TryParseHtmlString(message.Substring(hexIndex, hexLength), out Color color);
+                            currentTag.color = color;
+
+                            tags.Add(currentTag);
+                            currentTag = default;
+                        }
+                    }
+                }
+            }
+            
+
+            if (tags.Count == 0)
+            {
+                for (int i = 0; i < message.Length; i++)
+                {
+                    chars.Add(new Char()
+                    {
+                        character = message[i],
+                        color = default
+                    });
+                }
+            }
+            else
+            {
+                int tagIndex = 0;
+                Color color = default;
+
+                for (int i = 0; i < message.Length; i++)
+                {
+                    Tag nextTag = tagIndex < tags.Count ? tags[tagIndex] : default;
+
+                    if (i == nextTag.firstOpenIndex)
+                    {
+                        color = nextTag.color;
+                        i = nextTag.firstCloseIndex;
+
+                    }
+                    else if (i == nextTag.secondOpenIndex)
+                    {
+                        color = default;
+                        i = nextTag.secondCloseIndex;
+                        tagIndex++;
+                    }
+                    else
+                    {
+                        chars.Add(new Char()
+                        {
+                            character = message[i],
+                            color = color
+                        });
+                    }
+                }
+            }
+
+
+            return chars;
         }
 
         private List<Line> Preprocess(string message)
         {
             List<Line> lines = new();
             List<Word> words = new();
-            List<char> currentWord = new();
+            List<Char> currentWord = new();
 
-            for (int i = 0; i < message.Length; i++)
+            List<Char> chars = PreprocessRichText(message);
+
+            for (int i = 0; i < chars.Count; i++)
             {
-                char character = message[i];
+                Char character = chars[i];
 
-                if (character == ' ')
+                if (character.character == ' ')
                 {
                     Word word = new Word(currentWord);
                     word.widthInPixels = GetStringWidth(word.characters);
@@ -222,7 +350,7 @@ namespace InGame
                     currentWord.Clear();
                     // FIX: Double spaces
                 }
-                else if (character == '\n')
+                else if (character.character == '\n')
                 {
                     if (currentWord.Count > 0)
                     {
@@ -275,9 +403,9 @@ namespace InGame
 
         private void BuildText(List<Line> lines)
         {
-            Vector2 charSize = font.characterSize * fontScale;
-            int charSpacing = font.characterSpacing * fontScale;
-            int spaceSize = font.spaceSize * fontScale;
+            Vector2 charSize = (Vector2)font.characterSize * fontScale;
+            float charSpacing = font.characterSpacing * fontScale;
+            float spaceSize = font.spaceSize * fontScale;
 
 
             // Per-textblock section
@@ -296,7 +424,7 @@ namespace InGame
                 // Per-line section
                 Line line = lines[i];
 
-                int lineWidthInPixels = line.widthInPixels * fontScale;
+                float lineWidthInPixels = line.widthInPixels * fontScale;
                 lineWidthInPixels += Mathf.Max(0, (line.words.Length - 1) * spaceSize);
                 lineWidthInPixels += line.words.Sum(w => Mathf.Max(0, (w.characters.Length - 1) * charSpacing));
 
@@ -318,10 +446,10 @@ namespace InGame
                     for (int k = 0; k < word.characters.Length; k++)
                     {
                         // Per-character section
-                        char character = word.characters[k];
-                        CharacterRect characterRect = font.GetCharacterRect(character);
+                        Char character = word.characters[k];
+                        CharacterRect characterRect = font.GetCharacterRect(character.character);
 
-                        AppendCharacter(verts, uvs, character, offset - new Vector3(characterRect.offsetXInPixels, 0, 0));
+                        AppendCharacter(verts, uvs, colors, character, offset - new Vector3(characterRect.offsetXInPixels, 0, 0));
                         offset.x += characterRect.widthInPixels * fontScale;
 
                         // Do not add character spacing for last character
@@ -339,13 +467,13 @@ namespace InGame
         }
 
 
-        private int GetStringWidth(char[] message)
+        private int GetStringWidth(Char[] message)
         {
             int width = 0;
 
             for (var i = 0; i < message.Length; i++)
             {
-                width += font.GetCharacterRect(message[i]).widthInPixels;
+                width += font.GetCharacterRect(message[i].character).widthInPixels;
             }
 
             return width;
@@ -380,9 +508,9 @@ namespace InGame
             }
         }
 
-        private void AppendCharacter(List<Vector3> verts, List<Vector2> uvs, char character, Vector3 offset)
+        private void AppendCharacter(List<Vector3> verts, List<Vector2> uvs, List<Color> colors, Char character, Vector3 offset)
         {
-            Vector2 meshSize = font.characterSize * fontScale;
+            Vector2 meshSize = (Vector2)font.characterSize * fontScale;
 
             verts.Add(offset + new Vector3(0, 0, 0));
             verts.Add(offset + new Vector3(0, meshSize.y, 0));
@@ -394,7 +522,7 @@ namespace InGame
             Vector2 uv_characterSize = new(font.characterSize.x / (float)textureSize.x, font.characterSize.y / (float)textureSize.y);
 
 
-            Vector2Int characterIndex = font.GetCharacterIndex(character);
+            Vector2Int characterIndex = font.GetCharacterIndex(character.character);
 
             Vector2 uv_min = new Vector2(characterIndex.x * uv_characterSize.x, 1 - (characterIndex.y + 1) * uv_characterSize.y);
             Vector2 uv_max = new Vector2((characterIndex.x + 1) * uv_characterSize.x, 1 - characterIndex.y * uv_characterSize.y);
@@ -403,6 +531,14 @@ namespace InGame
             uvs.Add(new Vector2(uv_min.x, uv_max.y));
             uvs.Add(new Vector2(uv_max.x, uv_max.y));
             uvs.Add(new Vector2(uv_max.x, uv_min.y));
+
+
+            Color meshColor = character.color == default ? color : character.color;
+
+            colors.Add(meshColor);
+            colors.Add(meshColor);
+            colors.Add(meshColor);
+            colors.Add(meshColor);
         }
 
         private Vector2 GetTextPosition()
@@ -417,6 +553,11 @@ namespace InGame
             startPos.y -= font.characterSize.y * fontScale;
 
             return startPos;
+        }
+
+        private void Dirty()
+        {
+            isDirty = true;
         }
     }
 }

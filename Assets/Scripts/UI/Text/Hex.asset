@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 320fb56e565d4dcaa6eeedcdc95eec3b, type: 3}
+  m_Name: Hex
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 4ea7c0c194b0dfb488a87407da9ce091, type: 2}
+  characterSize: {x: 8, y: 12}
+  characterPadding: {x: 0, y: 0}
+  characterRects:
+  - character: 63
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 48
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 49
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 50
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 51
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 52
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 53
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 54
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 55
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 56
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 57
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 97
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 98
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 99
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 100
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 101
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 102
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 65
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 66
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 67
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 68
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 69
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 70
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 120
+    widthInPixels: 8
+    offsetXInPixels: 0
+  - character: 88
+    widthInPixels: 8
+    offsetXInPixels: 0
+  characters: ?0123456789abcdefABCDEFxX
+  spaceSize: 6
+  characterSpacing: 1
+  generationMode: 0
+  doGenerate: 0
+  fontSheet: {fileID: 2800000, guid: 5b72aa140d8439a45b57b25b255f0588, type: 3}
+  widthGroups: []

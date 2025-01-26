@@ -20,7 +20,7 @@ namespace InGame
             Sprite[] sprites = data.Where(o => o is Sprite).Cast<Sprite>().ToArray();
             char[] chars = font.characters.Where(c => c != ' ' && c != '\n').ToArray();
 
-            Debug.Log(string.Concat(chars));
+            // Debug.Log(string.Concat(chars));
 
             if (sprites.Length != chars.Length)
             {

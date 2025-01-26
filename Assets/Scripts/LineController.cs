@@ -5,7 +5,7 @@ namespace InGame
 {
     public class LineController : MonoBehaviour
     {
-        [SerializeField] private TMP_InputField lineIndexText;
+        [SerializeField] private PixelText lineIndexText;
         [SerializeField] private RowController[] byteRows, charRows;
 
         [SerializeField] private Transform byteRowsParent, charRowsParent;
