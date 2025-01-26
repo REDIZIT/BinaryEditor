@@ -21,6 +21,12 @@ namespace InGame
     [ExecuteAlways]
     public class PixelText : MonoBehaviour
     {
+        public int FontScale
+        {
+            get => fontScale;
+            set { fontScale = value; RebuildText(); }
+        }
+
         [TextArea(3, 12)]
         [SerializeField] private string text;
 
@@ -78,7 +84,9 @@ namespace InGame
         {
             if (mesh != null)
             {
-                Destroy(mesh);
+                if (Application.isPlaying) Destroy(mesh);
+                else DestroyImmediate(mesh);
+
                 mesh = null;
             }
         }
@@ -100,10 +108,12 @@ namespace InGame
         {
             Awake();
             Start();
+            RebuildText();
+        }
 
-            if (font == null) return;
-
-            if (string.IsNullOrWhiteSpace(text))
+        private void RebuildText()
+        {
+            if (string.IsNullOrWhiteSpace(text) || font == null)
             {
                 ClearMesh();
             }
@@ -218,15 +228,20 @@ namespace InGame
 
         private void BuildText(List<Line> lines)
         {
+            Vector2 charSize = font.characterSize * fontScale;
+            int charSpacing = font.characterSpacing * fontScale;
+            int spaceSize = font.spaceSize * fontScale;
+
+
             // Per-textblock section
             Vector3 offset = Vector3.zero;
             if (verticalAlignment == TextVerticalAlignment.Middle)
             {
-                offset.y = (lines.Count * font.characterSize.y) / 2f;
+                offset.y = (lines.Count * charSize.y) / 2f;
             }
             else if (verticalAlignment == TextVerticalAlignment.Bottom)
             {
-                offset.y = lines.Count * font.characterSize.y;
+                offset.y = lines.Count * charSize.y;
             }
 
             for (int i = 0; i < lines.Count; i++)
@@ -234,9 +249,9 @@ namespace InGame
                 // Per-line section
                 Line line = lines[i];
 
-                int lineWidthInPixels = line.widthInPixels;
-                lineWidthInPixels += Mathf.Max(0, (line.words.Length - 1) * font.spaceSize);
-                lineWidthInPixels += line.words.Sum(w => Mathf.Max(0, (w.characters.Length - 1) * font.characterSpacing));
+                int lineWidthInPixels = line.widthInPixels * fontScale;
+                lineWidthInPixels += Mathf.Max(0, (line.words.Length - 1) * spaceSize);
+                lineWidthInPixels += line.words.Sum(w => Mathf.Max(0, (w.characters.Length - 1) * charSpacing));
 
                 offset.x = 0;
                 if (horiztonalAlignment == TextHoriztonalAlignment.Middle)
@@ -260,19 +275,19 @@ namespace InGame
                         CharacterRect characterRect = font.GetCharacterRect(character);
 
                         AppendCharacter(verts, uvs, character, offset - new Vector3(characterRect.offsetXInPixels, 0, 0));
-                        offset.x += characterRect.widthInPixels;
+                        offset.x += characterRect.widthInPixels * fontScale;
 
                         // Do not add character spacing for last character
                         if (k < word.characters.Length - 1)
                         {
-                            offset.x += font.characterSpacing;
+                            offset.x += charSpacing;
                         }
                     }
 
-                    offset.x += font.spaceSize;
+                    offset.x += spaceSize;
                 }
 
-                offset.y -= font.characterSize.y;
+                offset.y -= charSize.y;
             }
         }
 
@@ -322,10 +337,10 @@ namespace InGame
         {
             Vector2 meshSize = font.characterSize * fontScale;
 
-            float magicOffset = 0.01f;
-
-            meshSize.y += magicOffset * 2;
-            offset.y -= magicOffset;
+            // float magicOffset = 0.01f;
+            //
+            // meshSize.y += magicOffset * 2;
+            // offset.y -= magicOffset;
 
             verts.Add(offset + new Vector3(0, 0, 0));
             verts.Add(offset + new Vector3(0, meshSize.y, 0));
@@ -359,7 +374,7 @@ namespace InGame
             startPos.y = center.y + halfsize.y * (int)verticalAlignment;
 
             // if (verticalAlignment == TextVerticalAlignment.Top) startPos.y -= font.characterSize.y;
-            startPos.y -= font.characterSize.y;
+            startPos.y -= font.characterSize.y * fontScale;
 
             return startPos;
         }
