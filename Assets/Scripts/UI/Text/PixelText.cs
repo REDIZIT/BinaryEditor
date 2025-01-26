@@ -19,6 +19,12 @@ namespace InGame
             set { _text = value; Dirty(); }
         }
 
+        public PixelFont Font
+        {
+            get => font;
+            set { font = value; Dirty(); }
+        }
+
         [TextArea(3, 12)]
         [SerializeField] private string _text;
 
@@ -27,6 +33,7 @@ namespace InGame
         [SerializeField] private TextVerticalAlignment verticalAlignment = TextVerticalAlignment.Top;
         [SerializeField] private TextHoriztonalAlignment horiztonalAlignment = TextHoriztonalAlignment.Left;
         [SerializeField] private Color color = Color.white;
+        [SerializeField] private bool richText;
 
         private GameObject rendererInst;
         private RectTransform rendRect;
@@ -40,6 +47,9 @@ namespace InGame
         private List<Vector3> verts = new();
         private List<Vector2> uvs = new();
         private List<Color> colors = new();
+
+        private List<Char> preprocessChars = new();
+        private static List<int> triangles = new();
 
         private Rect prevRect;
         private Vector2 prevPos;
@@ -60,8 +70,14 @@ namespace InGame
 
             public Word(List<Char> chars)
             {
-                characters = chars.ToArray();
                 widthInPixels = 0;
+
+                characters = new Char[chars.Count];
+
+                for (int i = 0; i < chars.Count; i++)
+                {
+                    characters[i] = chars[i];
+                }
             }
         }
         private struct Char
@@ -153,6 +169,7 @@ namespace InGame
 
             if (isDirty)
             {
+                isDirty = false;
                 RebuildText();
             }
 
@@ -195,6 +212,7 @@ namespace InGame
             uvs.Clear();
             colors.Clear();
 
+            Debug.Log("RebuildMesh for " + message.Length);
 
             //
             // Preprocess
@@ -245,6 +263,7 @@ namespace InGame
                         else
                         {
                             isTagCollecting = false;
+                            currentTag = default;
                         }
                     }
                     else
@@ -280,7 +299,7 @@ namespace InGame
                     }
                 }
             }
-            
+
 
             if (tags.Count == 0)
             {
@@ -329,13 +348,29 @@ namespace InGame
             return chars;
         }
 
+        private List<Char> PreprocessChars(string message)
+        {
+            preprocessChars.Clear();
+
+            for (int i = 0; i < message.Length; i++)
+            {
+                preprocessChars.Add(new()
+                {
+                    character = message[i],
+                    color = default
+                });
+            }
+
+            return preprocessChars;
+        }
+
         private List<Line> Preprocess(string message)
         {
             List<Line> lines = new();
             List<Word> words = new();
             List<Char> currentWord = new();
 
-            List<Char> chars = PreprocessRichText(message);
+            List<Char> chars = richText ? PreprocessRichText(message) : PreprocessChars(message);
 
             for (int i = 0; i < chars.Count; i++)
             {
@@ -481,21 +516,22 @@ namespace InGame
 
         private void AppendTriangles(int charactersBuilt)
         {
-            int[] tris = new int[6 * charactersBuilt];
-            for (int i = 0; i < charactersBuilt; i++)
-            {
-                int vertIndex = i * 4;
-                int trisIndex = i * 6;
+            int trisIndex = triangles.Count / 6;
+            int delta = charactersBuilt - trisIndex;
 
-                tris[trisIndex + 0] = 0 + vertIndex;
-                tris[trisIndex + 1] = 1 + vertIndex;
-                tris[trisIndex + 2] = 2 + vertIndex;
-                tris[trisIndex + 3] = 2 + vertIndex;
-                tris[trisIndex + 4] = 3 + vertIndex;
-                tris[trisIndex + 5] = 0 + vertIndex;
+            for (int i = 0; i < delta; i++)
+            {
+                int vertIndex = (trisIndex + i) * 4;
+
+                triangles.Add(0 + vertIndex);
+                triangles.Add(1 + vertIndex);
+                triangles.Add(2 + vertIndex);
+                triangles.Add(2 + vertIndex);
+                triangles.Add(3 + vertIndex);
+                triangles.Add(0 + vertIndex);
             }
 
-            mesh.SetTriangles(tris, 0);
+            mesh.SetTriangles(triangles, 0, charactersBuilt * 6, 0, true);
         }
 
         private void RecalculateBounds()

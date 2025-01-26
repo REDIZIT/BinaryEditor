@@ -27,6 +27,9 @@ namespace InGame
         [Header("- From width groups settings")]
         public WidthGroup[] widthGroups;
 
+        private Dictionary<char, Vector2Int> indexByChar = new();
+        private Dictionary<char, CharacterRect> rectByChar = new();
+
         public enum GenerateMode
         {
             FromWidthGroups,
@@ -46,11 +49,20 @@ namespace InGame
 
         public Vector2Int GetCharacterIndex(char character)
         {
-            Vector2Int index = Vector2Int.zero;
+            if (indexByChar.TryGetValue(character, out Vector2Int index))
+            {
+                return index;
+            }
+
+            index = Vector2Int.zero;
 
             foreach (char fontChar in characters)
             {
-                if (fontChar == character) return index;
+                if (fontChar == character)
+                {
+                    indexByChar.Add(character, index);
+                    return index;
+                }
 
                 if (fontChar == '\n')
                 {
@@ -64,19 +76,31 @@ namespace InGame
             }
 
             // Debug.Log("Unknown character: " + character);
+            indexByChar.Add(character, index);
             return index;
         }
 
         public CharacterRect GetCharacterRect(char character)
         {
+            if (rectByChar.TryGetValue(character, out CharacterRect cacheRect))
+            {
+                return cacheRect;
+            }
+
             foreach (CharacterRect rect in characterRects)
             {
-                if (rect.character == character) return rect;
+                if (rect.character == character)
+                {
+                    rectByChar.Add(character, rect);
+                    return rect;
+                }
             }
 
             // Debug.LogError($"Character rect not found for '{character}'");
 
-            return characterRects[0];
+            cacheRect = characterRects[0];
+            rectByChar.Add(character, cacheRect);
+            return cacheRect;
         }
     }
 
