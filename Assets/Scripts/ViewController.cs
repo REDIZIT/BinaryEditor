@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using Zenject;
 
 namespace InGame
 {
@@ -18,6 +19,8 @@ namespace InGame
         [SerializeField] private Transform container;
 
         [SerializeField] private Scrollbar scrollbar;
+
+        [Inject] private FilesController files;
 
         private LineController[] lineInsts = new LineController[48];
 
@@ -48,6 +51,11 @@ namespace InGame
             {
                 scroll -= (int)Input.mouseScrollDelta.y * (Input.GetKey(KeyCode.LeftShift) ? 10 : 1);
                 Refresh();
+            }
+
+            if (file != null && file.isAutoreloadEnabled && file.status == FileStatus.DiskChanged)
+            {
+                files.Reload(file);
             }
         }
 
@@ -149,7 +157,7 @@ namespace InGame
 
             for (int i = 0; i < linesCount; i++)
             {
-                bool isThisLineZeroed = true;
+                bool isThisLineZeroed = file.isZeroFoldingEnabled;
                 for (int j = 0; j < 16; j++)
                 {
                     int byteIndex = i * 16 + j;

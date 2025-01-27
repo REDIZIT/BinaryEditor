@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -27,6 +28,14 @@ namespace InGame
 
                 int realAddress = realLine * 16 + cellPos.x;
                 words.Add("Address: 0x" + realAddress.ToString("x"));
+
+                if (view.File != null && realAddress >= 0 && realAddress < view.File.data.Count)
+                {
+                    int dec = view.File.data[realAddress];
+
+                    words.Add("Dec: " + dec);
+                }
+
             }
 
             statusText.text = string.Join(", ", words);

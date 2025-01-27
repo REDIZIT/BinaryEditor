@@ -101,6 +101,8 @@ namespace InGame
         public List<byte> data;
         public FileSystemWatcher watcher;
         public FileStatus status;
+        public bool isAutoreloadEnabled;
+        public bool isZeroFoldingEnabled;
 
         public void SetupWatcher()
         {

@@ -8,10 +8,12 @@ using Object = UnityEngine.Object;
 
 namespace InGame
 {
+
     public static class PixelFontGenerator
     {
         public static void GenerateFromSprites(PixelFont font)
         {
+#if UNITY_EDITOR
             string path = AssetDatabase.GetAssetPath(font.fontSheet);
             Object[] data = AssetDatabase.LoadAllAssetsAtPath(path);
             if (data == null) return;
@@ -41,6 +43,7 @@ namespace InGame
                 };
                 font.characterRects.Add(rect);
             }
+#endif
         }
 
         public static void GenerateFromWidthGroups(PixelFont font)

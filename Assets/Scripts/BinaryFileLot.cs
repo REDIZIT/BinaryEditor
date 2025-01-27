@@ -69,6 +69,16 @@ namespace InGame
             };
             yield return new ContextMenuItem()
             {
+                text = model.isAutoreloadEnabled ? "Disable autoreload" : "Enable autoreload",
+                action = () => model.isAutoreloadEnabled = !model.isAutoreloadEnabled
+            };
+            yield return new ContextMenuItem()
+            {
+                text = model.isZeroFoldingEnabled ? "Enable zero folding" : "Disable zero folding",
+                action = () => model.isZeroFoldingEnabled = !model.isZeroFoldingEnabled
+            };
+            yield return new ContextMenuItem()
+            {
                 text = "Save to disk",
                 action = () => files.SaveToDisk(model)
             };
