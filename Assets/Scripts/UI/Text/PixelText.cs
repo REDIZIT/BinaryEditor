@@ -27,6 +27,12 @@ namespace InGame
             set { font = value; Dirty(); }
         }
 
+        public Color color
+        {
+            get => _color;
+            set { _color = value; Dirty(); }
+        }
+
         [TextArea(3, 12)]
         [SerializeField] private string _text;
 
@@ -34,7 +40,7 @@ namespace InGame
         [SerializeField] private float fontScale = 1;
         [SerializeField] private TextVerticalAlignment verticalAlignment = TextVerticalAlignment.Top;
         [SerializeField] private TextHoriztonalAlignment horiztonalAlignment = TextHoriztonalAlignment.Left;
-        [SerializeField] private Color color = Color.white;
+        [SerializeField] private Color _color = Color.white;
         [SerializeField] private bool richText;
 
         private GameObject rendererInst;
@@ -119,7 +125,6 @@ namespace InGame
         {
             OnEnable();
             Awake();
-            Start();
             RebuildText();
         }
 
@@ -151,10 +156,7 @@ namespace InGame
                 catcher = rendererInst.GetComponent<PixelCatcher>();
                 rect = GetComponent<RectTransform>();
             }
-        }
 
-        private void Start()
-        {
             if (mesh == null)
             {
                 mesh = new();
@@ -213,7 +215,7 @@ namespace InGame
 
         private void ClearMesh()
         {
-            mesh.Clear();
+            if (mesh != null) mesh.Clear();
         }
         private void RebuildMesh(string message)
         {
@@ -576,7 +578,7 @@ namespace InGame
             uvs.Add(new Vector2(uv_max.x, uv_min.y));
 
 
-            Color meshColor = character.color == default ? color : character.color;
+            Color meshColor = character.color == default ? _color : character.color;
 
             colors.Add(meshColor);
             colors.Add(meshColor);

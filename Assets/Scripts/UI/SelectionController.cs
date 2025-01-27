@@ -230,8 +230,6 @@ namespace InGame
 
             foreach (Selection selection in selections)
             {
-                Debug.Log("Select: " + selection.begin.ToString("x") + ":" + selection.end.ToString("x"));
-
                 for (int i = selection.begin; i <= selection.end; i++)
                 {
                     int virtualAddress = view.AbsToVirtualLine(i / 16) * 16 + i % 16;

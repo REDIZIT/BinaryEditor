@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 using Zenject;
@@ -8,7 +7,7 @@ namespace InGame
     public class GoToWindow : MonoBehaviour
     {
         [SerializeField] private TMP_InputField field;
-        [SerializeField] private Sprite focusSprite, invalidSprite, defaultSprite;
+        [SerializeField] private InputFieldValidator fieldValidator;
 
         [Require] private Window window;
 
@@ -31,14 +30,7 @@ namespace InGame
             field.onValueChanged.AddListener((str) =>
             {
                 bool isValid = TryGetAddress(str, out _);
-
-                var sprites = field.spriteState;
-                sprites.selectedSprite = isValid ? focusSprite : invalidSprite;
-                sprites.pressedSprite = sprites.selectedSprite;
-                sprites.highlightedSprite = isValid ? defaultSprite : invalidSprite;
-                field.spriteState = sprites;
-
-                field.image.sprite = sprites.highlightedSprite;
+                fieldValidator.MarkValid(isValid);
             });
         }
 

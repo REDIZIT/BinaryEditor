@@ -35,7 +35,7 @@ namespace InGame
                 text.text = b.ToString("x2");
             }
 
-            // text.color = b == 0 ? Color.gray : Color.white;
+            text.color = b == 0 ? Color.gray : Color.white;
         }
 
         public void Clear()

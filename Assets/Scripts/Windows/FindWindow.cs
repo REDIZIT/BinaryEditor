@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine;
 using Zenject;
@@ -9,7 +8,9 @@ namespace InGame
     public class FindWindow : MonoBehaviour
     {
         [SerializeField] private TMP_InputField field;
+        [SerializeField] private InputFieldValidator fieldValidator;
         [SerializeField] private TextMeshProUGUI matchesText;
+        [SerializeField] private TMP_Dropdown dropdown;
 
         [Require] private Window window;
 
@@ -22,63 +23,90 @@ namespace InGame
 
         public void OnFieldChange()
         {
-            byte[] pattern = field.text.ToHexBytes();
-
-            int i_pattern = 0;
-            int pattern_beginAddress = 0;
-
-            // bool isHalf = field.text.Length % 2 != 0;
-
             matches.Clear();
 
-            if (pattern.Length > 0)
+            fieldValidator.MarkValid(true);
+            if (field.text.Length > 0)
             {
-                for (int i = 0; i < view.File.data.Count; i++)
+                if (dropdown.value == 0)
                 {
-                    byte fileByte = view.File.data[i];
-                    byte patternByte = pattern[i_pattern];
-
-                    // if (IsMatch(fileByte, patternByte, isHalf && i_pattern == pattern.Length - 1, isHalf && i_pattern == 0))
-                    if (IsMatch(fileByte, patternByte))
+                    try
                     {
-                        if (i_pattern == 0)
-                        {
-                            pattern_beginAddress = i;
-                        }
-
-                        i_pattern++;
-                        if (i_pattern >= pattern.Length)
-                        {
-                            matches.Add(new()
-                            {
-                                selection = new(pattern_beginAddress, i)
-                            });
-                            i_pattern = 0;
-                        }
+                        byte[] pattern = field.text.ToHexBytes();
+                        FindBin(pattern);
                     }
-                    else
+                    catch
                     {
-                        i_pattern = 0;
+                        fieldValidator.MarkValid(false);
                     }
                 }
+                else
+                {
+                    FindASCII();
+                }
             }
-
-            // selection.selections.Clear();
-            // selection.selections.AddRange(matches.Select(m => m.selection));
-            // selection.Refresh();
 
             currentMatch = 0;
             OnCurrentMatchChange();
         }
 
-        public void OnNextClicked()
+        private void FindBin(byte[] pattern)
         {
-            currentMatch = Mathf.Clamp(currentMatch + 1, 0, matches.Count - 1);
-            OnCurrentMatchChange();
+            int i_pattern = 0;
+            int pattern_beginAddress = 0;
+
+            for (int i = 0; i < view.File.data.Count; i++)
+            {
+                byte fileByte = view.File.data[i];
+                byte patternByte = pattern[i_pattern];
+
+                // if (IsMatch(fileByte, patternByte, isHalf && i_pattern == pattern.Length - 1, isHalf && i_pattern == 0))
+                if (IsMatch(fileByte, patternByte))
+                {
+                    if (i_pattern == 0)
+                    {
+                        pattern_beginAddress = i;
+                    }
+
+                    i_pattern++;
+                    if (i_pattern >= pattern.Length)
+                    {
+                        matches.Add(new()
+                        {
+                            selection = new(pattern_beginAddress, i)
+                        });
+                        i_pattern = 0;
+                    }
+                }
+                else
+                {
+                    i_pattern = 0;
+                }
+            }
         }
-        public void OnPrevClicked()
+
+        private void FindASCII()
         {
-            currentMatch = Mathf.Clamp(currentMatch - 1, 0, matches.Count - 1);
+            byte[] pattern = System.Text.Encoding.ASCII.GetBytes(field.text);
+            FindBin(pattern);
+        }
+
+        public void OnNextPrevClicked(int direction)
+        {
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                if (direction > 0) currentMatch = matches.Count - 1;
+                else currentMatch = 0;
+            }
+            else if (Input.GetKey(KeyCode.LeftControl))
+            {
+                currentMatch = Mathf.Clamp(currentMatch + 10 * direction, 0, matches.Count - 1);
+            }
+            else
+            {
+                currentMatch = Mathf.Clamp(currentMatch + direction, 0, matches.Count - 1);
+            }
+
             OnCurrentMatchChange();
         }
 

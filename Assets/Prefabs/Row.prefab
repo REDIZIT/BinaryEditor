@@ -203,5 +203,5 @@ MonoBehaviour:
   fontScale: 0.5
   verticalAlignment: 0
   horiztonalAlignment: 0
-  color: {r: 1, g: 1, b: 1, a: 1}
+  _color: {r: 1, g: 1, b: 1, a: 1}
   richText: 0

@@ -353,6 +353,7 @@ GameObject:
   - component: {fileID: 9044489410796409729}
   - component: {fileID: 5765400018148750446}
   - component: {fileID: 8920168541831318436}
+  - component: {fileID: 5534200687007511717}
   m_Layer: 5
   m_Name: InputField
   m_TagString: Untagged
@@ -516,3 +517,18 @@ MonoBehaviour:
   m_isRichTextEditingAllowed: 0
   m_LineLimit: 0
   m_InputValidator: {fileID: 0}
+--- !u!114 &5534200687007511717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7598680639623748248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf35d3abb10049ff930ad29b3f1bfc45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  focusSprite: {fileID: -3356563379863978472, guid: d5d8c39ab2607cd4eab7098a835e9c2c, type: 3}
+  invalidSprite: {fileID: -9129120294432375109, guid: 08c32e735ee1a3f4e99c3f22f2645e45, type: 3}
+  defaultSprite: {fileID: 8646405055033196530, guid: 16d2a957e6021ba488bbe409fb1f3c93, type: 3}
