@@ -110,6 +110,10 @@ namespace Astra.Compilation
                         {
                             appendToken(vis);
                         }
+                        else if (TryTokenize(word, true, out Token wholeWordToken))
+                        {
+                            appendToken(wholeWordToken);
+                        }
                         else if (Token_Identifier.IsMatch(word))
                         {
                             appendToken(new Token_Identifier()
@@ -117,26 +121,19 @@ namespace Astra.Compilation
                                 name = word
                             });
                         }
-                        else
-                        {
-                            Token wholeWordToken = TryTokenize(word, true);
-                            if (wholeWordToken != null)
-                            {
-                                appendToken(wholeWordToken);
-                                continue;
-                            }
-                        }
-                    }
-
-                    if (currentChar != ' ')
-                    {
-                        TerminateLine(tokens, appendToken);
                     }
 
                     if (isSingleCharReached)
                     {
                         word += currentChar;
                         appendToken(singleCharToken);
+                    }
+                    else
+                    {
+                        if (currentChar != ' ')
+                        {
+                            TerminateLine(tokens, appendToken);
+                        }
                     }
 
                     word = "";
@@ -147,6 +144,11 @@ namespace Astra.Compilation
             return tokens;
         }
 
+        private static bool TryTokenize(string word, bool isWholeWord, out Token token)
+        {
+            token = TryTokenize(word, isWholeWord);
+            return token != null;
+        }
         private static Token TryTokenize(string word, bool isWholeWord)
         {
             if (Token_Equality.TryMatch(word, out var eq)) return eq;

@@ -1,0 +1,49 @@
+{
+	"cases":
+	[
+		{
+			"color": "#57a64a",
+			"types": [ "comment" ]
+		},
+		{
+			"color": "#585b70",
+			"types": [ "invalid" ]
+		},
+		{
+			"color": "#dcdcdc",
+			"types": [ "punctuation" ]
+		},
+		{
+			"color": "#9cdcfe",
+			"types": [ "operator" ]
+		},
+		{
+			"color": "#fab387",
+			"types": [ "bool", "variableName"]
+		},
+		{
+			"color": "#b5cea8",
+			"types": [ "number" ]
+		},
+		{
+			"color": "#4ec9b0",
+			"types": [ "className" ]
+		},
+		{
+			"color": "#d69d85",
+			"types": [ "string" ]
+		},
+		{
+			"color": "#569cd6",
+			"types": [ "typeName" ]
+		},
+		{
+			"color": "#569cd6",
+			"types": [ "keyword" ]
+		},
+		{
+			"color": "#d8a0df",
+			"types": [ "controlFlowKeyword" ]
+		}
+	]
+}
